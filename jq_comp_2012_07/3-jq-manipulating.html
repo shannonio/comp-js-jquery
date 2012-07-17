@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>jQuery: Manipulating the DOM</title>
+  <link type="text/css" rel="stylesheet" href="preso/sh/styles/shCoreDefault.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/dzslides.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/custom.css"/>
+
+  <script type="text/javascript" src="preso/js/jquery.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shCore.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shAutoloader.js"></script>
+  <script type="text/javascript" src="preso/js/dzslides.js"></script>
+  <script type="text/javascript" src="preso/js/custom.js"></script>
+</head>
+<body>
+
+<section>
+  <h1>Manipulating the DOM</h1>
+  <div style="width:820px;padding-top:1em" class="smaller">
+    <div style="width:300px;float:right">
+      <a href="http://bocoup.com/">
+        <img style="display:block;margin:0.4em auto 0" src="media/logo/bocoup-200.png" alt="bocoup">
+        <p style="margin:0">bocoup</p>
+      </a>
+    </div>
+    <div style="width:500px;float:right">
+      <h3 style="margin-bottom:0">&ldquo;Cowboy&rdquo; Ben Alman</h3>
+      <p class="smaller">
+        <a href="http://benalman.com/">benalman.com</a><br/>
+        <a href="http://github.com/cowboy/">github.com/cowboy</a><br/>
+        <a href="http://twitter.com/cowboy">@cowboy</a><br/>
+      </p>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+</section>
+
+<section>
+  <h1>Getters &amp; Setters</h1>
+  <pre class="brush:js class-name:l20">
+    // jQuery methods are both setters (affecting every selected element)...
+    $("li").html("&lt;b&gt;Hello&lt;/b&gt; &lt;i&gt;world&lt;/i&gt;");
+    $("li").text("&lt;b&gt;Hello&lt;/b&gt; &lt;i&gt;world&lt;/i&gt;");
+
+    // And getters. Note that methods that work as both getter and setter
+    // will only return the value for the first selected element.
+    $("li").html();
+
+    // With a few notable exception, of course.
+    $("li").text();
+
+    // Many methods that work as setters will also take a function callback
+    // that can be used to programmatically change values.
+
+    $("p, li").html(function(index, value) {
+      // this: The current DOM element.
+      // index: The current element index, in the set.
+      // value: The value of the property in question.
+      return "&lt;b&gt;" + index + "&lt;/b&gt; " + value;
+    });
+
+    // This was the "old" way, BTW.
+
+    $("p, li").each(function(index) {
+      $(this).html("&lt;b&gt;" + index + "&lt;/b&gt; " + $(this).html());
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/html/"><code>.html()</code> method</a>
+    <a href="http://api.jquery.com/text/"><code>.text()</code> method</a>
+    <a href="http://github.com/brandonaaron/jquery.batch">Brandon Aaron: jQuery Batch plugin</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Form Element Values</h1>
+  <pre class="brush:js class-name:l20">
+    // Set the value of all text input elements.
+    $(":text").val("hello world");
+
+    // Get the value of the first selected input element.
+    $("input").val();
+
+    // Get the value of the first radio button.
+    $(":radio").val();
+
+    // Get the value of the first *checked* radio button.
+    $(":radio:checked").val();
+
+    // While multiselect boxes have the selected values returned as
+    // an array...
+    $("[name=multi]").val();
+
+    // Checkboxes, unfortunately, don't.
+    $(":checkbox:checked").val();
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/val/"><code>.val()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>.map</code> Method</h1>
+  <pre class="brush:js">
+    // How can we collect the values of all checked checkboxes?
+
+    // Like .each, .map can be called on a collection of elements, and
+    // .get can be used to convert the resulting jQuery object into an
+    // array of values.
+
+    var result = $(":checkbox:checked").map(function(index, elem) {
+      return $(this).val();
+    }).get();
+
+    result; // ["first-checkbox", "second-checkbox"]
+
+
+    // Collect the values of all checked checkboxes, using $.map.
+
+    var result = $.map($(":checkbox:checked"), function(value, index) {
+      return $(value).val();
+    });
+
+    result; // ["first-checkbox", "second-checkbox"]
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/map/"><code>.map()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Attributes</h1>
+  <pre class="brush:js class-name:l20">
+    // Change all image src attributes.
+    $("img").attr("src", "../media/test/javascript.png");
+
+    // Get image alt attribute value.
+    $("img").attr("alt");
+
+    // Set image alt attribute values programmatically via callback.
+    $("img").attr("alt", function(index, value) {
+      return value + "!!!";
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/attr/"><code>.attr()</code> method</a>
+    <a href="http://api.jquery.com/removeAttr/"><code>.removeAttr()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Class Attributes</h1>
+  <pre class="brush:js class-name:l20">
+    // Add an HTML class to all the selected elements.
+    $(":header").addClass("fancy");
+
+    // Remove an HTML class from all the selected elements.
+    $(":header").removeClass("fancy");
+
+    // Test to see whether any of the selected elements have an HTML class.
+    if ( $(":header").hasClass("fancy") ) {
+      console.log("Yep.");
+    }
+
+    // Toggle an HTML class on all the selected elements.
+    $(":header").toggleClass("fancy");
+
+    // All of the "class" methods work with one or more classes.
+    $(":header").toggleClass("fancy selected");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/manipulation/class-attribute/">Manipulation: Class Attributes</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Style, Dimensions<br>&amp; Position</h1>
+</section>
+
+<section>
+  <h1>The <code>.css</code> Method</h1>
+  <pre class="brush:js class-name:l20">
+    // Get style properties.
+    $("p").css("color");
+
+    // Set style properties.
+    $("p").css("color", "#0a0");
+
+    // Set multiple style properties simultaneously.
+    $("p").css({
+      color: "#fff",
+      opacity: 0.5,
+      fontWeight: 700,
+      "background-color": "#0a0"
+    });
+
+    // Setting a style property programmatically via callback.
+    $("p").css("opacity", function(index, value) {
+      return value - 0.2;
+    });
+
+    // What's the easiest way to reset all .css calls?
+    $("p").removeAttr("style");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/css/"><code>.css()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Widths &amp; Heights</h1>
+  <pre class="brush:js class-name:l20">
+    // Get / set the current computed width and height.
+    $("p").width();
+    $("p").height();
+
+    // Get the current computed width and height (including padding
+    // but not border).
+    $("p").innerWidth();
+    $("p").innerHeight();
+
+    // Get the current computed width and height (including padding,
+    // border, and optionally margin).
+    $("p").outerWidth();
+    $("p").outerHeight();
+
+    // Passing true will include the size of the margin in the result.
+    $("p").outerWidth(true);
+    $("p").outerHeight(true);
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/manipulation/style-properties/">Manipulation: Style Properties</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Element Position</h1>
+  <pre class="brush:js class-name:l20">
+    // The current coordinates, in pixels, relative to the document.
+    var absOffset = $("img:first").offset();
+
+    absOffset.left; // 516
+    absOffset.top;  // 54
+
+    // The current coordinates, in pixels, relative to the offset parent (the
+    // closest parent that has a non-static position set).
+    var relOffset = $("img:first").position();
+
+    relOffset.left; // 0
+    relOffset.top;  // 46
+
+    // While .offset and .position are getter-only, setting offsets is easy
+    // using the .css method.
+    $("img").css({
+      position: "absolute",
+      left: 10,
+      top: 10
+    });
+  </pre>
+  <aside>
+    <aside>
+      <a href="http://api.jquery.com/offset/"><code>.offset()</code> method</a>
+      <a href="http://api.jquery.com/position/"><code>.position()</code> method</a>
+    </aside>
+  </aside>
+</section>
+
+<section>
+  <h1>Scroll Position</h1>
+  <pre class="brush:js">
+    // The current horizontal position of the scroll bar.
+    $("body").scrollLeft();
+
+    // The current vertical position of the scroll bar.
+    $("body").scrollTop();
+
+
+    // Of course, these methods work on any element that has a scroll bar.
+    $("div:first")
+      .css("overflow", "auto")
+      .height(150)
+      .scrollTop(100);
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/scrollLeft/"><code>.scrollLeft()</code> method</a>
+    <a href="http://api.jquery.com/scrollTop/"><code>.scrollTop()</code> method</a>
+  </aside>
+</section>
+
+
+<section>
+  <h1>Method Chaining</h1>
+  <pre class="brush:js class-name:l20">
+    // Reselecting elements each time is very inefficient!
+
+    $("div:first").css("overflow", "auto");
+    $("div:first").height(150);
+    $("div:first").scrollTop(100);
+
+
+    // Referencing a collection is extremely efficient.
+
+    var div = $("div:first");
+
+    div.css("overflow", "auto");
+    div.height(150);
+    div.scrollTop(100);
+
+
+    // Because every chainable method also returns a jQuery object (unless
+    // when used as getters, of course) you can simplify things further.
+
+    $("div:first").css("overflow", "auto").height(150).scrollTop(100);
+
+
+    // Properly indented, the chaining example is just as efficient as the
+    // referenced selection example, and even easier to read.
+
+    $("div:first")
+      .css("overflow", "auto")
+      .height(150)
+      .scrollTop(100);
+  </pre>
+</section>
+
+<section>
+  <h1>Creating Elements</h1>
+  <pre class="brush:js class-name:l20">
+    // When creating elements, you can add attributes and content.
+
+    $('&lt;p id=&quot;test&quot; class=&quot;fancy&quot;&gt;&lt;b&gt;hello&lt;/b&gt; &lt;i&gt;world&lt;/i&gt;&lt;/p&gt;');
+
+
+    // You could also do the same things, and more, by chaining.
+
+    $("&lt;p/&gt;")
+      .attr("id", "test")
+      .addClass("fancy")
+      .html("&lt;b&gt;hello&lt;/b&gt; &lt;i&gt;world&lt;/i&gt;")
+      .click(function() {
+        console.log($(this).text());
+      });
+
+
+    // As of jQuery 1.4, you can also pass in a configuration object as the
+    // second parameter to the jQuery function when creating a new element.
+
+    $("&lt;p/&gt;", {
+      id: "test",
+      className: "fancy",
+      html: "&lt;b&gt;hello&lt;/b&gt; &lt;i&gt;world&lt;/i&gt;",
+      click: function() {
+        console.log($(this).text());
+      }
+    });
+
+
+    // The beginnings of a basic "templating" system...
+
+    var params = {
+      className: "fancy",
+      html: "&lt;b&gt;hello&lt;/b&gt; &lt;i&gt;world&lt;/i&gt;",
+      click: function() {
+        console.log($(this).text());
+      }
+    };
+
+    $("&lt;h4/&gt;", params).insertAfter("h1");
+    $("&lt;h3/&gt;", params).insertAfter("h1");
+    $("&lt;h2/&gt;", params).insertAfter("h1");
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#974">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/jQuery/"><code>jQuery()</code> function</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Prepend &amp; Append</h1>
+  <p class="subhead">(Appending elements to the DOM, <i>inside</i> another element)</p>
+  <pre class="brush:js class-name:l20">
+    // This is just like setting .innerHTML (but better, of course).
+    $("div").html("&lt;p&gt;hello&lt;/p&gt;&lt;p&gt;world&lt;/p&gt;");
+
+
+    // Create a new element and add it inside each selected element,
+    // at the beginning.
+    $("&lt;i&gt;Prepended&lt;/i&gt;").prependTo("p");
+
+    // Create a new element and add it inside each selected element,
+    // at the end.
+    $("&lt;i&gt;Appended&lt;/i&gt;").appendTo("p");
+
+
+    // Add some content inside each selected element, at the beginning.
+    $("p").prepend("&lt;i&gt;Prepended&lt;/i&gt; ");
+
+    // Add some content inside each selected element, at the end.
+    $("p").append(" &lt;i&gt;Appended&lt;/i&gt;");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/manipulation/dom-insertion-inside/">DOM Insertion, Inside</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Before &amp; After</h1>
+  <p class="subhead">(Appending elements to the DOM, <i>outside</i> another element)</p>
+  <pre class="brush:js class-name:l16">
+    // Create a new element and add it immediately before each
+    // selected element.
+    $("&lt;i&gt;Inserted before&lt;/i&gt;").insertBefore("p");
+
+    // Create a new element and add it immediately after each
+    // selected element.
+    $("&lt;i&gt;Inserted after&lt;/i&gt;").insertAfter("p");
+
+
+    // Add some content immediately before each selected element.
+    $("p").before("&lt;i&gt;Inserted before&lt;/i&gt;");
+
+    // Add some content immediately after each selected element.
+    $("p").after("&lt;i&gt;Inserted after&lt;/i&gt;");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/manipulation/dom-insertion-outside/">DOM Insertion, Outside</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Food for Thought</h1>
+  <pre class="brush:js">
+    // Consider the differences. Which element gets the class?
+
+    $("p").append("&lt;i&gt;New content&lt;/i&gt;").addClass("selected");
+
+    $("&lt;i&gt;New content&lt;/i&gt;").appendTo("p").addClass("selected");
+
+
+    // Now consider performance. Which will be more performant?
+
+    $("&lt;i&gt;New content&lt;/i&gt;").appendTo("p").addClass("selected");
+
+    $("&lt;i&gt;New content&lt;/i&gt;").addClass("selected").appendTo("p");
+  </pre>
+</section>
+
+<section>
+  <h1>What's Going On?</h1>
+  <pre class="brush:js class-name:l16">
+    // This shouldn't surprise you.
+
+    $("&lt;i&gt;New content&lt;/i&gt;").length // 1
+
+    // How about this?
+
+    $("&lt;i&gt;New content&lt;/i&gt;").appendTo("p").length // 4
+
+    // Again, consider performance.
+
+    $("&lt;i&gt;New content&lt;/i&gt;").appendTo("p").addClass("selected");
+
+    $("&lt;i&gt;New content&lt;/i&gt;").addClass("selected").appendTo("p");
+  </pre>
+</section>
+
+<section>
+  <h1>Wrapping Elements</h1>
+  <pre class="brush:js class-name:l20">
+    // Wrap all selected elements with some HTML.
+    $("a").wrap('&lt;span class=&quot;selected&quot;/&gt;');
+
+    // Unwrap all selected elements.
+    $("a").unwrap();
+
+    // Wrap a group of selected elements, *together*, with some HTML.
+    $("p").wrapAll('&lt;div class=&quot;selected&quot;/&gt;');
+
+    // This will probably not do what you want it to do.
+    $("li").wrapAll('&lt;div class=&quot;selected&quot;/&gt;');
+
+    // Wrap the content inside each selected element with some HTML.
+    $("h1").wrapInner('&lt;span class=&quot;selected&quot;/&gt;');
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/manipulation/dom-insertion-around/">DOM Insertion, Around</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Replacing Elements</h1>
+  <pre class="brush:js">
+    // Replace all h3 elements with a newly created h4 element.
+    $("<h4>New heading</h4>").replaceAll("h3");
+
+    // The same thing... but different (think chaining).
+    $("h3").replaceWith("<h4>New heading</h4>");
+
+    // New elements created programmatically via callback.
+    $("h3").replaceWith(function(index) {
+      return "<h1>New heading #" + (index + 1) + "</h1>"
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/manipulation/dom-insertion-replacement/">DOM Replacement</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Removing Elements</h1>
+  <pre class="brush:js class-name:l20">
+    // Remove all contents from the selected elements.
+    $("p").empty();
+
+    // Remove all selected elements from the DOM (should be permanent).
+    $("p").remove();
+
+
+    // Detach all selected elements from the DOM. Event handler / data
+    // garbage collection is not performed so that elements can be
+    // re-attached.
+
+    var table = $("table"),
+        placeholder = $("&lt;div/&gt;").insertBefore(table);
+
+    table.detach();
+
+    // Perform super-expensive content / CSS style manipulations
+
+    placeholder.replaceWith(table);
+  </pre>
+</section>
+
+<section>
+  <h1>Cloning Elements</h1>
+  <pre class="brush:js class-name:l20">
+    // An example click event handler.
+    $("img").bind("mouseover mouseout", function() {
+      $(this).toggleClass("hover");
+    });
+
+    // Clone the image, but none of its events or data.
+    $("img:last").clone().insertAfter("h1");
+
+    // Clone the image, with all of its events and data.
+    $("img:last").clone(true).insertAfter("h2");
+
+
+    // What's the difference between these?
+
+    $("img:first").height(20).prependTo("li");
+
+    $("img:first").clone().height(20).prependTo("li");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/clone/"><code>.clone()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Recap</h1>
+  <ul>
+    <li>Getters &amp; Setters</li>
+    <li>Classes &amp; Attributes</li>
+    <li>Dimensions &amp; Position</li>
+    <li>Moving, Removing &amp; Cloning</li>
+    <li>Method Chaining</li>
+  </ul>
+</section>
+
+</body>
+</html>

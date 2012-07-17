@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>jQuery: Best Practices</title>
+  <link type="text/css" rel="stylesheet" href="preso/sh/styles/shCoreDefault.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/dzslides.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/custom.css"/>
+  
+  <script type="text/javascript" src="preso/js/jquery.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shCore.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shAutoloader.js"></script>
+  <script type="text/javascript" src="preso/js/dzslides.js"></script>
+  <script type="text/javascript" src="preso/js/custom.js"></script>
+</head>
+<body>
+
+<section>
+  <h1>jQuery Best Practices</h1>
+  <div style="width:820px;padding-top:1em" class="smaller">
+    <div style="width:300px;float:right">
+      <a href="http://bocoup.com/">
+        <img style="display:block;margin:0.4em auto 0" src="media/logo/bocoup-200.png" alt="bocoup">
+        <p style="margin:0">bocoup</p>
+      </a>
+    </div>
+    <div style="width:500px;float:right">
+      <h3 style="margin-bottom:0">&ldquo;Cowboy&rdquo; Ben Alman</h3>
+      <p class="smaller">
+        <a href="http://benalman.com/">benalman.com</a><br/>
+        <a href="http://github.com/cowboy/">github.com/cowboy</a><br/>
+        <a href="http://twitter.com/cowboy">@cowboy</a><br/>
+      </p>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+</section>
+
+<section>
+  <h1>Don't Repeat Yourself</h1>
+  <p class="subhead">&ldquo;DRY&rdquo;: Don't Repeat Yourself. &ldquo;WET&rdquo;: Write Everything Twice.</p>
+  <pre class="brush:js class-name:l22">
+    // Not great: a lot of repeated, not-at-all-DRY code.
+    
+    $('body')
+      .bind('click', function(e) { console.log('click: ', e.target); })
+      .bind('dblclick', function(e) { console.log('dblclick: ', e.target); })
+      .bind('keydown', function(e) { console.log('keydown: ', e.target); })
+      .bind('keypress', function(e) { console.log('keypress: ', e.target); })
+      .bind('keyup', function(e) { console.log('keyup: ', e.target); });
+    
+    
+    // Good: code is more DRY, which is a huge improvement, but it is not as
+    // obvious what is being done at first glance.
+    
+    function myBind(name) {
+      $('body').bind(name, function(e) { console.log(name + ': ', e.target); })
+    };
+    
+    myBind('click');
+    myBind('dblclick');
+    myBind('keydown');
+    myBind('keypress');
+    myBind('keyup');
+    
+    
+    // Better: the handler has been generalized to use the event.type property,
+    // and it is totally obvious what is being done, even at first glance.
+    
+    function myHandler(e) {
+      console.log(e.type + ': ', e.target);
+    };
+    
+    $('body')
+      .bind('click', myHandler)
+      .bind('dblclick', myHandler)
+      .bind('keydown', myHandler)
+      .bind('keypress', myHandler)
+      .bind('keyup', myHandler);
+    
+    
+    // Best: really knowing how the jQuery API works can reduce your
+    // code complexity and make it even more readable.
+    
+    $('body').bind('click dblclick keydown keypress keyup', function(e) {
+      console.log(e.type + ': ', e.target);
+    });
+  </pre>
+</section>
+
+<section>
+  <h1>Use the jQuery API</h1>
+  <p><a href="http://api.jquery.com/">http://api.jquery.com/</a></p>
+</section>
+
+<section>
+  <h1>Use the jQuery Source</h1>
+  <p><a href="http://bit.ly/jqsource">http://bit.ly/jqsource</a></p>
+</section>
+
+<section>
+  <h2>Avoid Premature Optimization</h2>
+  <p class="subhead">And no, forgoing comments is not a valid optimization.</p>
+  <pre class="brush:js">
+    // What the ?!
+    if ( !( ++frame % 32 ) ) {
+      while ( last_n == ~~( tmp = rnd( tmp2 = rnd() ) * 6 ) );
+      last_n = ~~tmp;
+      
+      tmp < 0.4 ? dir = -dir
+      : tmp < 2 ? color_idx++
+      : tmp < 3 ? math_mode = tmp2 * 7
+      : tmp < 4 ? cycle_speed = tmp2 * 8 + 1
+      : tmp < 5 ? delay_speed = tmp2 * 3 + 1
+      : min_size = min( max_size = tmp2 * 8 + 4, rnd() * 5 + 5 ) - 2;
+    }
+    
+    for ( i = 0; i < 32; ) {
+      tmp = items[i] = items[i] || { x: 0, y: 0 };
+      
+      tmp2 = items[ i - 1 ];
+      
+      tmp.x = i ? tmp.x + ( tmp2.x - tmp.x ) / delay_speed : x;
+      tmp.y = i++ ? tmp.y + ( tmp2.y - tmp.y ) / delay_speed : y;
+    }
+    
+    while ( tmp = blips[i++] ) {
+      tmp2 = tmp.s += tmp.d;
+      tmp.d = tmp2 > max_size ? -1
+            : tmp2 < min_size ? 1
+            : tmp.d;
+      
+      context.beginPath( context.fillStyle = '#' + tmp.c );
+      context.fill( context.arc( origin_x + tmp.x, origin_y + tmp.y,
+        tmp2 * scale, 0, pi2, 0 ) );
+    }
+  </pre>
+  <aside>
+    <a href="http://github.com/cowboy/js1k-organ1k/blob/master/organ1k.js">JS1k: Organ1k commented source</a>
+    <a href="http://js1k.com/">JS1k: Contest homepage</a>
+    <a href="http://jsperf.com/browse">jsPerf: JavaScript performance playground</a>
+  </aside>
+</section>
+
+<section>
+  <h2>Avoid Over-Avoiding<br>Premature Optimization</h2>
+  <p class="subhead">There's no excuse for horrible code.</p>
+  <pre class="brush:js class-name:l14">
+    // Bad: very slow, and not even remotely DRY.
+    
+    $('#foo').appendTo('body');
+    $('#foo').addClass('test');
+    $('#foo').show();
+    
+    
+    // Good: the jQuery object reference is "cached" in elem.
+    
+    var elem = $('#foo')
+    
+    elem.appendTo('body');
+    elem.addClass('test');
+    elem.show();
+    
+    
+    // Even better: jQuery methods are chained.
+    
+    $('#foo')
+      .appendTo('body')
+      .addClass('test')
+      .show();
+    
+    
+    // And you can even combine caching with chaining, which can be
+    // especially useful in conditionals.
+    
+    var elem = $('#foo').appendTo('body');
+    
+    if ( some_condition) {
+      elem.addClass('test');
+    } else {
+      elem.show();
+    }
+  </pre>
+</section>
+
+<section>
+  <h1>Playing Nice With Others</h1>
+</section>
+
+<section>
+  <h1>Don't Modify Objects<br>You Don't Own</h1>
+  <aside>
+    <a href="http://www.nczonline.net/blog/2010/03/02/maintainable-javascript-dont-modify-objects-you-down-own/">Nicholas Zakas: Don’t modify objects you don’t own</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Declare Your Variables</h1>
+  <pre class="brush:js">
+    // Bad!
+    a = 1;
+    
+    // Good!
+    var a = 1;
+  </pre>
+</section>
+
+<section>
+  <h1>Use a Closure</h1>
+  <pre class="brush:js class-name:l24">
+    // Ultra-basic jQuery plugin pattern.
+    
+    (function($) {
+
+      var myPrivateProperty = 1;
+
+      // Call this public method like $.myMethod();
+      $.myMethod = function() {
+        // Your non-element-specific jQuery method code here.
+      };
+
+      // Call this public method like $(elem).myMethod();
+      $.fn.myMethod = function() {
+        return this.each(function() {
+          // Your chainable "jQuery object" method code here.
+        });
+      };
+
+      function myPrivateMethod() {
+        // More code.
+      };
+
+    })(jQuery);
+  </pre>
+  <aside>
+    <a href="http://benalman.com/news/2010/11/immediately-invoked-function-expression/">Immediately Invoked Function Expression (IIFE)</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Elements of style</h1>
+  <ul>
+    <li>Line length</li>
+    <li>Tabs vs. spaces</li>
+    <li>Crowding arguments</li>
+    <li>Comments</li>
+    <li>Curly braces</li>
+  </ul>
+</section>
+
+<section>
+  <h1>In Conclusion</h1>
+</section>
+
+
+
+
+
+
+</body>
+</html>

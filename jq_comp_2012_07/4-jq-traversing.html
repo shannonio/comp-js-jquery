@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>jQuery: Filtering &amp; Traversing</title>
+  <link type="text/css" rel="stylesheet" href="preso/sh/styles/shCoreDefault.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/dzslides.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/custom.css"/>
+
+  <script type="text/javascript" src="preso/js/jquery.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shCore.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shAutoloader.js"></script>
+  <script type="text/javascript" src="preso/js/dzslides.js"></script>
+  <script type="text/javascript" src="preso/js/custom.js"></script>
+</head>
+<body>
+
+<section>
+  <h1>Filtering &amp; Traversing</h1>
+  <div style="width:820px;padding-top:1em" class="smaller">
+    <div style="width:300px;float:right">
+      <a href="http://bocoup.com/">
+        <img style="display:block;margin:0.4em auto 0" src="media/logo/bocoup-200.png" alt="bocoup">
+        <p style="margin:0">bocoup</p>
+      </a>
+    </div>
+    <div style="width:500px;float:right">
+      <h3 style="margin-bottom:0">&ldquo;Cowboy&rdquo; Ben Alman</h3>
+      <p class="smaller">
+        <a href="http://benalman.com/">benalman.com</a><br/>
+        <a href="http://github.com/cowboy/">github.com/cowboy</a><br/>
+        <a href="http://twitter.com/cowboy">@cowboy</a><br/>
+      </p>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+</section>
+
+<section>
+  <h1>Filtering</h1>
+</section>
+
+<section>
+  <h1>Matching a Selector</h1>
+  <pre class="brush:js class-name:l20">
+    // Reduce the collection to only those who are first children
+    // of their parent.
+    $("li").filter(":first-child").addClass("selected");
+
+
+    // Reduce the collection to only those who have an alt attribute
+    // equal to value "Bob".
+    $("img").filter("[alt='Bob']").addClass("selected");
+
+
+    // Reduce the collection to only those who have an alt attribute,
+    // but one that is not equal to value "Bob".
+    $("img, p, li").filter("[alt][alt!='Bob']").addClass("selected");
+
+
+    // The .is method will return true if any of the elements in the
+    // collection match the selector.
+    if ( $("p:last").is(":hidden") ) {
+      console.log("Hidden!")
+    }
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/filter/"><code>.filter()</code> method</a>
+    <a href="http://api.jquery.com/is/"><code>.is()</code> method</a>
+  </aside>
+</section>
+
+<section>
+<h2><i>Not</i> Matching a Selector</h2>
+  <pre class="brush:js class-name:l20">
+    // Reduce the collection to only those who are not last children
+    // of their parent.
+    $("li").not(":last-child").addClass("selected");
+
+
+    // Reduce the collection to only those who do not have an alt
+    // attribute equal to value "Bob".
+    $("img").not("[alt='Bob']").addClass("selected");
+
+
+    // Reduce the collection to only those who have an alt attribute,
+    // but one that is not equal to value "Bob".
+    $("img, p, li").filter("[alt]").not("[alt='Bob']").addClass("selected");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/not/"><code>.not()</code> method</a>
+    <a href="http://api.jquery.com/filter/"><code>.filter()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h2>Elements Containing an Element</h2>
+  <p class="subhead">(matching a selector)</p>
+  <pre class="brush:js">
+    // Reduce the collection to only those who contain a elements.
+
+    $("p").has("a").addClass("selected");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/has/"><code>.has()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Slicing and Dicing</h1>
+  <pre class="brush:js class-name:l20">
+    // Reduce the collection to all but the first two elements.
+    $("li").slice(2).addClass("selected");
+
+    // Reduce the collection to all but the last two elements.
+    $("li").slice(0, -2).addClass("selected");
+
+    // Reduce the collection to only the first two elements.
+    $("li").slice(0, 2).addClass("selected");
+
+    // Reduce the collection to only the last two elements.
+    $("li").slice(-2).addClass("selected");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/slice/"><code>.slice()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Tree Traversing</h1>
+</section>
+
+<section>
+  <h1>Finding Descendants</h1>
+  <pre class="brush:js">
+    // For each element in the collection, the .find method will
+    // return all matching descendant elements.
+
+    $("#list1").find("li").addClass("selected");
+
+
+    // When you select with a context, jQuery actually uses .find
+    // internally.
+
+    var ul = document.getElementById("list1");
+
+    $("li", ul).addClass("selected");
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#163">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/find/"><code>.find()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Selecting Children</h1>
+  <pre class="brush:js class-name:l16">
+    // For each element in the collection, the .children method
+    // will return all matching descendant elements.
+
+    $("p").children().addClass("selected");
+
+    // You can pass a selector to .children, to further filter the
+    // results.
+
+    $("p").children(":not(a)").addClass("selected");
+
+    // BTW, that's equivalent to doing either of these.
+
+    $("p").children().filter(":not(a)").addClass("selected");
+    $("p").children().not("a").addClass("selected");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/children/"><code>.children()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Selecting Siblings</h1>
+  <pre class="brush:js class-name:l20">
+    // For each element in the collection, the .siblings method
+    // will return all matching sibling elements.
+    $("ul > :first-child").siblings().addClass("selected");
+
+    // You can pass a selector to .siblings, to further filter the
+    // results.
+    $("ul > :first-child").siblings(":not(:last-child)").addClass("selected");
+
+    // For each element in the collection, get the previous sibling.
+    $("ul").prev().addClass("selected");
+
+    // And the next sibling (but only if it matches the selector)...
+    $("h3").next("ul").addClass("selected");
+
+    // For each element in the collection, get all the previous
+    // siblings.
+    $("li:eq(2)").prevAll().addClass("selected");
+
+    // And all the next siblings (but only if they match the selector)...
+    $("h4").nextAll("h3").addClass("selected");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/siblings/"><code>.siblings()</code> method</a>
+    <a href="http://api.jquery.com/prev/"><code>.prev()</code> method</a>
+    <a href="http://api.jquery.com/next/"><code>.next()</code> method</a>
+    <a href="http://api.jquery.com/prevAll/"><code>.prevAll()</code> method</a>
+    <a href="http://api.jquery.com/nextAll/"><code>.nextAll()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Selecting Parents</h1>
+  <pre class="brush:js">
+    // For each element in the collection, the .parents method
+    // will return all matching ancestor elements.
+
+    $("input").parents(":not(body,html)").addClass("selected");
+
+    // For each element in the collection, the .parent method
+    // will return the matching parent element.
+
+    $("li").parent().addClass("selected");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/parent/"><code>.parent()</code> method</a>
+    <a href="http://api.jquery.com/parents/"><code>.parents()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h2>Parents Just Don't Understand</h2>
+  <pre class="brush:js class-name:l16">
+    // Sometimes, an element is nested deep within an ancestor you need to
+    // traverse to, but calling .parent multiple times is no good!
+
+    $("li a:eq(0)").parent().parent().addClass("selected");
+
+    // Whoops!
+
+    $("li a:eq(1)").parent().parent().addClass("selected");
+
+    // The closest method can simplify this logic.
+
+    $("li a:eq(1)").closest("ul, ol").addClass("selected");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/closest/"><code>.closest()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The &ldquo;Untils&rdquo;</h1>
+  <pre class="brush:js class-name:l20">
+    // Find all previous siblings until the selector matches.
+    $("form").prevUntil("h2").addClass("selected");
+
+    // Find all previous siblings that match the specified selector,
+    // until the initial selector matches.
+    $("form").prevUntil("h2", "h3").addClass("selected");
+
+
+    // Find all next siblings until the selector matches.
+    $("h1").nextUntil("p").addClass("selected");
+
+    // Find all next siblings that match the specified selector,
+    // until the initial selector matches.
+    $("h1").nextUntil("form", "p").addClass("selected");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/prevUntil/"><code>.prevUntil()</code> method</a>
+    <a href="http://api.jquery.com/nextUntil/"><code>.nextUntil()</code> method</a>
+    <a href="http://api.jquery.com/parentsUntil/"><code>.parentsUntil()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Reverting the Set</h1>
+  <pre class="brush:js class-name:l16">
+    // End the most recent filtering operation in the current chain and return
+    // the collection to its previous state.
+
+    $("ul").find("li").addClass("selected").end().addClass("active");
+
+
+    // By increasing indents after a traversal method, and then decreasing
+    // indents after .end, the collection's state is made much more clear.
+
+    $("ul")
+      .find("li")
+        .addClass("selected")
+        .end()
+      .addClass("active");
+
+    // Of course, in this case, you could just do:
+
+    $("ul")
+      .addClass("active")
+      .find("li")
+        .addClass("selected");
+
+    // But consider this example:
+
+    $("&lt;p&gt;&lt;b&gt;Hello&lt;/b&gt; &lt;i&gt;world&lt;/i&gt;&lt;/p&gt;")
+      .find("b")
+        .css("opacity", 0.5)
+        .end()
+      .appendTo("body");
+
+
+    // Be careful when chaining and assigning a reference in the same statement!
+
+    var lists = $("ul"); // lists references the set of all ul elements.
+
+    var lists = $("ul").find("li").addClass("selected"); // What is lists?
+
+
+    // Reverting traversal methods makes all the difference.
+
+    var lists = $("ul").find("li").addClass("selected").end();
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#291">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/end/"><code>.end()</code> method</a>
+    <a href="http://api.jquery.com/pushStack/"><code>.pushStack()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Miscellaneous Traversing</h1>
+</section>
+
+<section>
+  <h1>Adding Elements to Sets</h1>
+  <pre class="brush:js class-name:l16">
+    // Add elements that match a given selector to the current collection,
+    // returning a new collection.
+
+    $("ul").add("li");
+
+    // Add the set of elements from before the last traversal method to the
+    // current set of elements.
+
+    $("p").children().andSelf().addClass("selected");
+
+    // For example, these two are equivalent:
+
+    $("li:eq(1)").parent().children();
+    $("li:eq(1)").siblings().andSelf();
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#3842">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/add/"><code>.add()</code> method</a>
+    <a href="http://api.jquery.com/andSelf/"><code>.andSelf()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Contents</h1>
+  <pre class="brush:js class-name:l20">
+    // Get the children of each element in the collection,
+    // including text and comment nodes.
+
+    $("p:first").contents();
+
+    // Get all text node children, by passing a function to the .filter method:
+
+    $("p:first").contents().filter(function() {
+      return this.nodeType == 3;
+    });
+
+    // Get the document of an iframe.
+
+    $("#myiframe").contents();
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#3888">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/contents/"><code>.contents()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Recap</h1>
+  <ul>
+    <li>Filtering</li>
+    <li>Tree Traversing</li>
+    <li>Adding Elements to Sets</li>
+    <li>Reverting the Set</li>
+  </ul>
+</section>
+
+</body>
+</html>

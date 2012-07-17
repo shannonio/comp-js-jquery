@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>jQuery: AJAX</title>
+  <link type="text/css" rel="stylesheet" href="preso/sh/styles/shCoreDefault.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/dzslides.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/custom.css"/>
+
+  <script type="text/javascript" src="preso/js/jquery.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shCore.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shAutoloader.js"></script>
+  <script type="text/javascript" src="preso/js/dzslides.js"></script>
+  <script type="text/javascript" src="preso/js/custom.js"></script>
+</head>
+<body>
+
+<section>
+  <h1>jQuery: AJAX</h1>
+  <div style="width:820px;padding-top:1em" class="smaller">
+    <div style="width:300px;float:right">
+      <a href="http://bocoup.com/">
+        <img style="display:block;margin:0.4em auto 0" src="media/logo/bocoup-200.png" alt="bocoup">
+        <p style="margin:0">bocoup</p>
+      </a>
+    </div>
+    <div style="width:500px;float:right">
+      <h3 style="margin-bottom:0">&ldquo;Cowboy&rdquo; Ben Alman</h3>
+      <p class="smaller">
+        <a href="http://benalman.com/">benalman.com</a><br/>
+        <a href="http://github.com/cowboy/">github.com/cowboy</a><br/>
+        <a href="http://twitter.com/cowboy">@cowboy</a><br/>
+      </p>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+</section>
+
+<section>
+  <h1>What is AJAX?</h1>
+  <p class="subhead">(<b>A</b>synchronous <b>J</b>avaScript <b>a</b>nd <b>X</b>ML)</p>
+  <p>New content, without a page reload.</p>
+</section>
+
+<section>
+  <h1>AJAX without jQuery</h1>
+  <p class="subhead" style="padding-top:0.5em;">(<code>XMLHttpRequest</code> is an awfully big word)</p>
+  <pre class="brush:js">
+    // The URL with the JSON data.
+
+    var url = "../media/ajax/bob.json";
+
+    // The code that handles the parsed JSON data.
+
+    function callback(data) {
+      alert("My name is " + data.name);
+    };
+
+
+    // Attempt to create an XMLHttpRequest object.
+
+    var req = window.XMLHttpRequest
+      && (location.protocol !== "file:" || !window.ActiveXObject)
+      ? new window.XMLHttpRequest()
+      : (function() {
+          try {
+             return new window.ActiveXObject("Microsoft.XMLHTTP");
+          } catch(e) {}
+        })();
+
+    // Test to see if the XHR was successfully created.
+    if ( req ) {
+
+      // This is a GET request.
+      req.open("GET", url, true);
+
+      // When the XHR state changes..
+      req.onreadystatechange = function() {
+
+        // Return if not completed.
+        if ( req.readyState != 4 ) { return; }
+
+        // Alert if an error occurred.
+        if ( req.status != 200 && req.status != 304 ) {
+          alert("HTTP error " + req.status);
+        }
+
+        // Completed! Parse the response as JSON and call the callback.
+        var data = JSON.parse(req.responseText);
+        callback(data);
+      };
+
+      // Send the XHR.
+      req.send();
+    }
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#4975">jQuery 1.4.2 Source</a>
+    <a href="http://www.quirksmode.org/js/xmlhttp.html">QuirksMode: XMLHttpRequest functions</a>
+  </aside>
+</section>
+
+<section>
+  <h1>AJAX with jQuery</h1>
+  <pre class="brush:js">
+    // This does the same thing (pretty much).
+
+    $.getJSON("../media/ajax/bob.json", function(data) {
+      alert("My name is " + data.name);
+    });
+  </pre>
+</section>
+
+<section>
+  <h2>A is for Asynchronous</h2>
+  <pre class="brush:js">
+    var name;
+
+    // Make an AJAX HTTP GET request to media/ajax/bob.json?id=1.
+
+    $.getJSON("../media/ajax/bob.json", { id: 1 }, function(data) {
+      name = data.name;
+    });
+
+    // But wait - `item` is undefined here!
+
+    alert(name);
+  </pre>
+</section>
+
+<section>
+  <h1>The <code>.ajax</code> Method</h1>
+  <pre class="brush:js class-name:l16">
+    $.ajax({
+      // The URL for the request.
+      url: "../media/ajax/bob.json",
+
+      // The data to send. This will be converted to a query string.
+      data: { id: 1 },
+
+      // The request method, typically either POST or GET.
+      method: "GET",
+
+      // The type of data expected.
+      dataType: "json",
+
+      // This code runs if the request succeeds.
+      success: function(data) {
+        if ( data && data.name ) {
+          $("&lt;h1/&gt;").text("My name is " + data.name).prependTo("body");
+        }
+      },
+
+      // This code runs if the request fails.
+      error: function(xhr, status) {
+        alert("An error occurred: " + status);
+      },
+
+      // This code runs regardless of success or failure.
+      complete: function(xhr, status) {
+        alert("All done: " + status);
+      }
+    });
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#4975">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/jQuery.ajax/"><code>jQuery.ajax()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1><code>.ajax</code> Settings</h1>
+  <pre class="brush:js">
+    // You can pass all your settings into the $.ajax function every time.
+
+    $.ajax({
+      url: "../media/ajax/bob.json",
+      data: { id: 1 },
+      method: "GET",
+      dataType: "json",
+      success: function(data) {
+        if ( data && data.name ) {
+          $("&lt;h1/&gt;").text("My name is " + data.name).prependTo("body");
+        }
+      }
+    });
+
+
+    // Or you can initialize some defaults (overriding the existing defaults).
+
+    $.ajaxSetup({
+      url: "../media/ajax/bob.json",
+      method: "GET",
+      dataType: "json",
+      success: function(data) {
+        if ( data && data.name ) {
+          $("&lt;h1/&gt;").text("My name is " + data.name).prependTo("body");
+        }
+      }
+    });
+
+    // Resulting in less code for every subsequent call.
+
+    $.ajax({
+      data: { id: 1 }
+    });
+
+    $.ajax({
+      data: { id: 2 }
+    });
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#4934">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/jQuery.ajax/"><code>jQuery.ajax()</code> method</a>
+    <a href="http://api.jquery.com/jQuery.ajaxSetup/"><code>jQuery.ajaxSetup()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>dataType</code> Property</h1>
+  <table>
+    <tr>
+      <td><b>text</b></td>
+      <td>Returns a plain text string.</td>
+    </tr>
+    <tr>
+      <td><b>html</b></td>
+      <td>Returns HTML as plain text.
+        <br>
+        <i class="smaller">(Included script tags are evaluated when inserted in the DOM)</i>
+      </td>
+    </tr>
+    <tr>
+      <td><b>json</b></td>
+      <td>Evaluates the response as JSON and returns a JavaScript object.
+        <br>
+        <i class="smaller">(Since jQuery 1.4, the JSON data is parsed strict; malformed JSON will be rejected)</i>
+      </td>
+    </tr>
+    <tr>
+      <td><b>script</b></td>
+      <td>Evaluates the response as JavaScript and returns it as plain text.
+        <br>
+        <i class="smaller">(Disables caching unless option &ldquo;cache&rdquo; is used. Note: This will turn POST into GET.)</i>
+      </td>
+    </tr>
+    <tr>
+      <td><b>jsonp</b></td>
+      <td>Loads in a JSON block using JSONP.
+        <br>
+        <i class="smaller">Will add an extra <code>?callback=?</code> to the end of the request URL to specify the callback.</i>
+      </td>
+    </tr>
+    <tr>
+      <td><b>xml</b></td>
+      <td>Returns a XML document that can be processed via jQuery.</td>
+    </tr>
+  </table>
+  <aside>
+    <a href="http://api.jquery.com/jQuery.ajax/"><code>jQuery.ajax()</code> method</a>
+    <a href="http://api.jquery.com/jQuery.ajaxSetup/"><code>jQuery.ajaxSetup()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Shorthand Methods</h1>
+  <table style="width: 90%;">
+    <tr>
+      <td><code>.load()</code></td>
+      <td>Load data from the server and place the returned HTML into the matched element.</td>
+    </tr>
+    <tr>
+      <td><code>jQuery.get()</code></td>
+      <td>Load data from the server using a HTTP GET request.</td>
+    </tr>
+    <tr>
+      <td><code>jQuery.post()</code></td>
+      <td>Load data from the server using a HTTP POST request.</td>
+    </tr>
+    <tr>
+      <td><code>jQuery.getJSON()</code></td>
+      <td>Load JSON-encoded data from the server using a HTTP GET request.</td>
+    </tr>
+    <tr>
+      <td><code>jQuery.getScript()</code></td>
+      <td>Load a JavaScript file from the server using a HTTP GET request, then execute it.</td>
+    </tr>
+  </table>
+</section>
+
+<section>
+  <h1>The <code>.load</code> Method</h1>
+  <pre class="brush:js">
+    // Load an entire HTML page into a an existing element.
+
+    $("div:first").load("../media/ajax/page.html");
+
+
+    // Load an entire HTML page into a newly-created element.
+
+    $("&lt;div/&gt;")
+      .prependTo("div:first")
+      .load("../media/ajax/page.html");
+
+
+    // Load a portion of an HTML page into a newly-created element.
+
+    $("&lt;div/&gt;")
+      .prependTo("div:first")
+      .load("../media/ajax/page.html p");
+
+
+    // The same thing, using a different CSS selector:
+
+    $("&lt;div/&gt;")
+      .prependTo("div:first")
+      .load("../media/ajax/page.html #header");
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#4785">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/load/"><code>.load()</code> method</a>
+  </aside>
+</section>
+
+
+<section>
+  <h1>The <code>.get</code> Method</h1>
+  <pre class="brush:js">
+    // It doesn't get much simpler than this.
+
+    $.get("../media/ajax/bob.html?param=1", function(data) {
+      $("div:first").prepend(data);
+    });
+
+
+    // Which is just a shortcut for this:
+
+    $.ajax({
+      url: "../media/ajax/bob.html",
+      data: { param: 1 },
+      success: function(data) {
+        $("div:first").prepend(data);
+      },
+      dataType: "html"
+    });
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#4888">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/jQuery.get/"><code>jQuery.get()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>.post</code> Method</h1>
+  <pre class="brush:js class-name:l20">
+    // It doesnt get much simpler than this.
+
+    $.post("../media/ajax/bob.html?param=1", function(data) {
+      $("div:first").prepend(data);
+    });
+
+
+    // Which is just a shortcut for this:
+
+    $.ajax({
+      type: "POST",
+      url: "../media/ajax/bob.html",
+      data: { param: 1 },
+      success: function(data) {
+        $("div:first").prepend(data);
+      },
+      dataType: "html"
+    });
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#4913">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/jQuery.post/"><code>jQuery.post()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>.getJSON</code> Method</h1>
+  <pre class="brush:js">
+    // This:
+
+    $.getJSON("../media/ajax/bob.json", { id: 1 }, function(data) {
+      if ( data ) {
+        $("&lt;h1/&gt;")
+          .css("color", data.color)
+          .text(data.name + ", " + data.species)
+          .prependTo("div:first");
+      }
+    });
+
+
+    // Is a shortcut for this:
+
+    $.ajax({
+      url: "../media/ajax/bob.json",
+      data: { param: 1 },
+      success: function(data) {
+        if ( data ) {
+          $("&lt;h1/&gt;")
+            .css("color", data.color)
+            .text(data.name + ", " + data.species)
+            .prependTo("div:first");
+        }
+      },
+      dataType: "json"
+    });
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#4909">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/jQuery.getJSON/"><code>jQuery.getJSON()</code> method</a>
+    <a href="http://api.jquery.com/jQuery.parseJSON/"><code>jQuery.parseJSON()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>.getScript</code> Method</h1>
+  <pre class="brush:js">
+    // At its very simplest, load an external script into the page:
+
+    $.getScript("../media/ajax/bob.js");
+
+
+    // While a success callback is optional, sometimes it can be useful.
+
+    $.getScript("../media/ajax/bob.js", function() {
+      $("&lt;b/&gt;")
+        .html(" but Chuck Norris eats chicken for dinner!")
+        .css("color", "red")
+        .appendTo("h1");
+    });
+
+
+    // This is the $.ajax "long" version:
+
+    $.ajax({
+      url: "../media/ajax/bob.js",
+      dataType: "script",
+      success: function() {
+        $("&lt;b/&gt;")
+          .html(" but Chuck Norris eats chicken for dinner!")
+          .css("color", "red")
+          .appendTo("h1");
+      }
+    });
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#4905">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/jQuery.getScript/"><code>jQuery.getScript()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Just so you know...</h1>
+  <p>Cross-Domain JSON (JSONP) isn't really AJAX.</p>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#4987">jQuery 1.4.2 Source</a>
+  </aside>
+</section>
+
+<section>
+  <h1>JSONP with jQuery</h1>
+  <pre class="brush:js">
+    // Because the URL is on another domain, this will error!
+
+    $.getJSON(
+      "http://jsfiddle.net/echo/jsonp/",
+      { msg: "hello" },
+      function(data) {
+        if ( data ) {
+          alert(data.msg);
+        }
+      }
+    );
+
+
+    // JSONP "pads" the JSON response in a function call, making it work.
+
+    $.getJSON(
+      "http://jsfiddle.net/echo/jsonp/?callback=?",
+      { msg: "hello" },
+      function(data) {
+        if ( data ) {
+          alert(data.msg);
+        }
+      }
+    );
+
+
+    // But this is what it's REALLY doing (of course, there is a lot more going
+    // on than just this, but hopefully you get the idea).
+
+    window.handler = function(data) {
+      if ( data ) {
+        alert(data.msg);
+      }
+    };
+
+    $.getScript("http://jsfiddle.net/echo/jsonp/?callback=handler&msg=hello");
+
+
+    // And in case you need more control, you can make JSONP requests with $.ajax.
+
+    $.ajax({
+      url: "http://jsfiddle.net/echo/jsonp/",
+      data: { msg: "hello" },
+      success: function(data) {
+        if ( data ) {
+          alert(data.msg);
+        }
+      },
+      dataType: "jsonp",
+      jsonp: "callback"
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/jQuery.getJSON/"><code>jQuery.getJSON()</code> method</a>
+    <a href="http://en.wikipedia.org/wiki/JSON#JSONP">Wikipedia: JSONP</a>
+  </aside>
+</section>
+
+<section>
+  <h1>AJAX and Forms</h1>
+  <pre class="brush:js">
+    // Bind a handler to the form submit event.
+    $("form").submit(function(e) {
+
+      // Prevent the default action.
+      e.preventDefault();
+
+      // Serialize all form values into a params string.
+      var form_data = $(this).serialize();
+
+      // Make the AJAX request.
+      $.ajax({
+        url: "http://jsfiddle.net/echo/jsonp/",
+        data: form_data,
+        success: function(data) {
+          // Handle response.
+        },
+        dataType: "jsonp",
+        jsonp: "callback"
+      });
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/serialize/"><code>.serialize()</code> method</a>
+  </aside>
+</section>
+
+
+<section>
+  <h1>The <code>.param</code> Method</h1>
+  <pre class="brush:js">
+    // Serialize an arbitrary object into a URL-encoded params string.
+
+    var params = $.param({
+      foo: "abc",
+      bar: [ 1, 2, 3 ],
+      baz: { b: 1, c: 2 }
+    });
+
+    decodeURIComponent(params);
+    // "foo=abc&bar[]=1&bar[]=2&bar[]=3&baz[b]=1&baz[c]=2"
+
+
+    //
+    $.ajaxSettings.traditional = true;
+
+    var params = $.param({
+      foo: "abc",
+      bar: [ 1, 2, 3 ],
+      baz: { b: 1, c: 2 }
+    });
+
+    decodeURIComponent(params);
+    // "foo=abc&bar=1&bar=2&bar=3&baz=[object+Object]"
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/jQuery.param/"><code>jQuery.param()</code> method</a>
+    <a href="http://api.jquery.com/jQuery.ajax/"><code>jQuery.ajax()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>AJAX</h1>
+</section>
+
+<section>
+  <h1>But wait!</h1>
+  <p>As of jQuery 1.5, $.ajax is an implementation of $.Deferred</p>
+  <aside>
+  <a href="http://api.jquery.com/jQuery.Deferred">jQuery.Deferred</a>
+  </aside>
+</section>
+
+<section>
+  <h1>"Late Binding"</h1>
+  <pre class="brush:js">
+  // Look ma, no success callback
+  var myAjaxCall = $.ajax({url: "/comments/"});
+
+  // Until now!
+  myAjaxCall.success(function(data) {
+    $(data).appendTo("#commentContainer");
+  });
+
+  // Or now!
+  myAjaxCall.error(function(xhr, status) {
+    alert("Oops");
+  });
+  </pre>
+</section>
+
+<section>
+  <h1>Wait for multiple AJAX calls</h1>
+  <pre class="brush:js">
+
+  var getComments = $.get("/comments/", {post: 9001}),
+      getFriends = $.get("/friends", {user: "Ben"}); 
+
+  $.when(getComments, getFriends).then(function(comments, friends) {
+   alert("I got your comments AND your friends RIGHT HERE"); 
+  });
+  </pre>
+</section>
+
+</body>
+</html>

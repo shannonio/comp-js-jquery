@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>jQuery: Utilities</title>
+  <link type="text/css" rel="stylesheet" href="preso/sh/styles/shCoreDefault.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/dzslides.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/custom.css"/>
+
+  <script type="text/javascript" src="preso/js/jquery.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shCore.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shAutoloader.js"></script>
+  <script type="text/javascript" src="preso/js/dzslides.js"></script>
+  <script type="text/javascript" src="preso/js/custom.js"></script>
+</head>
+<body>
+
+<section>
+  <h1>Utilities</h1>
+  <div style="width:820px;padding-top:1em" class="smaller">
+    <div style="width:300px;float:right">
+      <a href="http://bocoup.com/">
+        <img style="display:block;margin:0.4em auto 0" src="media/logo/bocoup-200.png" alt="bocoup">
+        <p style="margin:0">bocoup</p>
+      </a>
+    </div>
+    <div style="width:500px;float:right">
+      <h3 style="margin-bottom:0">&ldquo;Cowboy&rdquo; Ben Alman</h3>
+      <p class="smaller">
+        <a href="http://benalman.com/">benalman.com</a><br/>
+        <a href="http://github.com/cowboy/">github.com/cowboy</a><br/>
+        <a href="http://twitter.com/cowboy">@cowboy</a><br/>
+      </p>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+</section>
+
+<section>
+  <h1>Iteration</h1>
+  <p class="subhead">jQuery provides two general-purpose iteration utilities.</p>
+  <pre class="brush:js class-name:l20">
+    // Use $.each when you just need to iterate over an array or
+    // object.
+
+    $.each(["cat", "bat", "rat"], function(index, item) {
+      console.log(index, item);
+    });
+
+    $.each({good: true, bad: false}, function(prop, value) {
+      console.log(prop, value);
+    });
+
+    // Use $.map when you need to iterate over an array and return
+    // another array.
+
+    var arr = $.map(["cat", "bat", "rat"], function(item, index) {
+      return item.charAt(0).toUpperCase() + item.substr(1);
+    });
+
+    arr // What is arr?
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/jQuery.each"><code>jQuery.each()</code> method</a>
+    <a href="http://api.jquery.com/jQuery.map"><code>jQuery.map()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Per-element Data</h1>
+  <pre class="brush:js">
+    // This is bad! Do NOT set data on the element this way.
+    $("p:first")[0].myWidget = {state: true};
+
+    // This is good! Set per-element data this way.
+    $("p:first").data("myWidget", {state: true});
+
+
+    // Get per-element data:
+    $("p:first").data("myWidget").state // true
+
+    // Remove per-element data:
+    $("p:first").removeData("myWidget");
+
+
+    // Since jQuery 1.4.3, you can get all data set on an element.
+
+    $("p:first").data() // {myWidget: {state: true}}
+    $("p:first").data().myWidget.state = false;
+
+    // jQuery 1.4.3+ can also utilize HTML5 data- attributes too!
+
+    // Given this sample HTML:
+    // &lt;div data-role='sample' data-options='{"name":"Bocoup"}'&gt;&lt;/div&gt;
+
+    $("div").data("role")         // "sample"
+    $("div").data("options").name // "Bocoup"
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/data"><code>.data()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h2>Cloning &amp; Merging Objects</h2>
+  <pre class="brush:js class-name:l16">
+    var obj = {a: [1,2,3], b: [4,5,6]};
+
+    // Shallow clone an object.
+    var shallowClone = $.extend({}, obj);
+
+    // Deep clone an object.
+    var deepClone = $.extend(true, {}, obj);
+
+    // Merge objects, preserving the original object.
+    var mergedObj = $.extend({}, obj, {b: true, c: false});
+
+    // Merge objects, modifying the original object.
+    $.extend(obj, {b: true, c: false});
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/jQuery.extend/"><code>jQuery.extend()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Coexisting With Others</h1>
+  <p class="subhead">(Other libs that have a <code>$</code> function, that is)</p>
+  <pre class="brush:js">
+    // Relinquish ownership of $.
+    $.noConflict();
+
+    $ // whatever it was before (or undefined)
+
+    // Relinquish ownership of $ and jQuery.
+    var myjQuery = $.noConflict(true);
+
+    $       // whatever it was before (or undefined)
+    jQuery  // whatever it was before (or undefined)
+
+    myjQuery("p"); // This works!
+
+
+    // Another way you might use $.noConflict (simplified a bit).
+
+    // Create a script element.
+    var script = document.createElement("script");
+
+    // Set its source.
+    script.src = "http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js";
+
+    // This function will execute after jQuery loads.
+    script.onload = function() {
+      // First, we need to clean up after ourselves.
+      document.head.removeChild(script);
+
+      // Your own, private jQuery
+      var $ = jQuery.noConflict(true);
+
+      // Do stuff!
+      console.log($.fn.jquery);
+    };
+
+    // Append this script element to the DOM.
+    document.head.appendChild(script);
+  </pre>
+  <aside>
+    <a href="https://gist.github.com/816746">jQuery Widget Bootstrap</a>
+    <a href="http://api.jquery.com/jQuery.noConflict/"><code>jQuery.noConflict()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>.proxy</code> Function</h1>
+  <p class="subhead">(lock a function context to a particular <code>this</code>)</p>
+  <pre class="brush:js class-name:l16">
+    var name = "The window";
+    var obj = {
+      name: "Bocoup",
+      whatsMyName: function() {
+        console.log(this.name);
+      }
+    };
+
+    obj.whatsMyName() // "Bocoup"
+
+
+    // When a function isn't invoked as a property of an object, `this`
+    // inside that function is `window`.
+
+    var whoops = obj.whatsMyName;
+    whoops() // "The window"
+
+
+    // With $.proxy, you can bind `this` to an object, in one of two ways:
+
+    var reallyAwesome = $.proxy(obj, "whatsMyName");
+    reallyAwesome() // "Bocoup"
+
+    var justAsAwesome = $.proxy(obj.whatsMyName, obj);
+    justAsAwesome() // "Bocoup"
+
+
+    // This will log the name of the input when clicked, because jQuery
+    // sets `this` inside event handlers to the DOM element, and the
+    // element has a name property!
+
+    $("input:first").click(obj.whatsMyName);
+
+    // This will log "Bocoup" when clicked, because `this` is bound to
+    // obj!
+
+    $("input:first").click( $.proxy(obj, "whatsMyName") );
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/jQuery.proxy/"><code>jQuery.proxy()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Type Checking</h1>
+  <p class="subhead">(The easy way)</p>
+  <pre class="brush:js class-name:l20">
+    // Have you ever run into issues with `typeof`?
+
+    typeof 1                // "number"
+    typeof new Number(1)    // "object"
+    typeof {a: 1}           // "object"
+    typeof [2, 3]           // "object"
+
+    // Worry no more, jQuery has your back!
+
+    $.type(1)               // "number"
+    $.type(new Number(1))   // "number"
+    $.type({a: 1})          // "object"
+    $.type([2, 3])          // "array" Awesome!
+
+    // There are a few more specific type-related functions.
+
+    $.isArray([2, 3])       // true
+    $.isFunction($)         // true
+    $.isPlainObject({})     // true
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/jQuery.type/"><code>jQuery.type()</code></a>
+    <a href="http://api.jquery.com/jQuery.isArray/"><code>jQuery.isArray()</code></a>
+    <a href="http://api.jquery.com/jQuery.isFunction/"><code>jQuery.isFunction()</code></a>
+    <a href="http://api.jquery.com/jQuery.isPlainObject/"><code>jQuery.isPlainObject()</code></a>
+  </aside>
+</section>
+
+<section>
+  <h1>Browser &amp; Support</h1>
+  <p class="subhead"></p>
+  <pre class="brush:js class-name:l16">
+    // The $.support property iteslf has LOTS of properties, all of
+    // which are used internally in jQuery.
+
+    $.support.opacity // False in IE, which uses "filter:alpha(...)"
+    $.support.submitBubbles // False in IE (jQuery "fixes" this)
+    $.support.leadingWhitespace // False in IE (surprise, surprise)
+    // etc...
+
+    // While $.browser exists, refrain from using it if possible,
+    // because it uses browser sniffing. Still, sometimes you just
+    // need to do something like this.
+
+    if ( $.browser.msie && $.browser.version &lt; 7 ) {
+      // Run some awesome IE6-specific code here.
+    }
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/jQuery.support/"><code>jQuery.support</code> property</a>
+    <a href="http://api.jquery.com/jQuery.browser/"><code>jQuery.browser</code> property</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Recap</h1>
+  <ul>
+    <li>Iteration</li>
+    <li>Per-Element Data</li>
+    <li>Cloning &amp; Merging Objects</li>
+    <li>Coexisting With Others</li>
+    <li>Lock in <code>this</code> with <code>$.proxy</code></li>
+    <li>Type Checking</li>
+    <li>Browser &amp; Support</li>
+  </ul>
+</section>
+
+</body>
+</html>

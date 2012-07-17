@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>jQuery Primer</title>
+  <link type="text/css" rel="stylesheet" href="preso/sh/styles/shCoreDefault.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/dzslides.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/custom.css"/>
+
+  <script type="text/javascript" src="preso/js/jquery.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shCore.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shAutoloader.js"></script>
+  <script type="text/javascript" src="preso/js/dzslides.js"></script>
+  <script type="text/javascript" src="preso/js/custom.js"></script>
+</head>
+<body>
+
+<section>
+  <h1>jQuery Primer</h1>
+  <div style="width:820px;padding-top:1em" class="smaller">
+    <div style="width:300px;float:right">
+      <a href="http://bocoup.com/">
+        <img style="display:block;margin:0.4em auto 0" src="media/logo/bocoup-200.png" alt="bocoup">
+        <p style="margin:0">bocoup</p>
+      </a>
+    </div>
+    <div style="width:500px;float:right">
+      <h3 style="margin-bottom:0">&ldquo;Cowboy&rdquo; Ben Alman</h3>
+      <p class="smaller">
+        <a href="http://benalman.com/">benalman.com</a><br/>
+        <a href="http://github.com/cowboy/">github.com/cowboy</a><br/>
+        <a href="http://twitter.com/cowboy">@cowboy</a><br/>
+      </p>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+</section>
+
+<section>
+  <h1>The <code>jQuery</code> Function</h1>
+  <p class="subhead">Select some elements, the easy way.</p>
+  <pre class="brush:js class-name:l16">
+    // Select some elements on the page using either this:
+    jQuery(selectorString);
+
+    // Or this:
+    $(selectorString);
+
+    // So instead of this mouthful:
+    document.getElementById("list1");
+
+    // You can just do this:
+    $("#list1");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/jQuery/"><code>jQuery()</code> function</a>
+  </aside>
+</section>
+
+<section>
+  <h1>What is <code>$</code>, anyways?</h1>
+  <p class="subhead">It's just a function!</p>
+  <pre class="brush:js class-name:l16">
+    // Just to prove a point.
+
+    var $ = function(str) {
+      return str + "!!!";
+    };
+
+    $("hello"); // "hello!!!"
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/jQuery/"><code>jQuery()</code> function</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Not <i>just</i> a function!</h1>
+  <p class="subhead">Don't forget, this is JavaScript.</p>
+  <pre class="brush:js">
+    // You should already know this part.
+
+    $(selector); // invoke $ function
+
+    // Because, in JavaScript, functions are objects too... and the
+    // .ajax function is a property of the jQuery function (object).
+
+    $.ajax(options); // invoke $.ajax function
+
+    // The jQuery function (object) has non-function properties, too.
+
+    $.support.opacity; // .opacity property of .support object property
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#19">jQuery 1.4.2 Source</a>
+    <a href="jquery-source/jquery-1.4.2.js.html#361">Source</a>
+    <a href="http://api.jquery.com/jQuery/"><code>jQuery()</code> function</a>
+  </aside>
+</section>
+
+<section>
+  <h1>But, there's more.</h1>
+  <p class="subhead">jQuery has a <code>prototype</code>.</p>
+  <pre class="brush:js class-name:l16">
+    // We know what this does, but what is it REALLY doing?
+
+    $(selector);
+
+    // Let's take a look inside of jQuery.
+
+    var jQuery = function(selector, context) {
+      // The jQuery object is actually just the init constructor 'enhanced'
+      return new jQuery.fn.init( selector, context );
+    }
+
+    jQuery.fn = jQuery.prototype = {...};
+
+    jQuery.fn.init.prototype = jQuery.fn;
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#19">jQuery 1.4.2 Source</a>
+    <a href="jquery-source/jquery-1.4.2.js.html#74">Source</a>
+    <a href="jquery-source/jquery-1.4.2.js.html#303">Source</a>
+    <a href="http://api.jquery.com/jQuery/"><code>jQuery()</code> function</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Other Ways to Select</h1>
+  <p class="subhead">(the jQuery function in a little more depth)</p>
+  <pre class="brush:js class-name:l20">
+    // An element reference.
+    var list = document.getElementById("list1");
+
+    // Selecting a single element by reference.
+    var $list = $(list);
+
+    // Selecting multiple elements by reference.
+    $([window, document, list]);
+
+    // Selecting no elements (an empty set). Note that in jQuery pre-1.4, this
+    // will select the document. For an empty set, you'd need to do $([]).
+    $();
+
+    // Selecting descendant elements of a context DOM element.
+    $("li", list);
+
+    // Cloning a jQuery object.
+    $($list);
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/jQuery/"><code>jQuery()</code> function</a>
+  </aside>
+</section>
+
+<section>
+  <h1>jQuery Objects</h1>
+  <p class="subhead">are Array-like collections</p>
+  <pre class="brush:js class-name:l20">
+    var elems = $(".nonexistent");
+
+    // Bad.
+    if ( elems ) {
+      // This code always executes.. but why?
+    }
+
+    // Good!
+    if ( elems.length ) {
+      // This code only executes if elements were actually selected.
+    }
+
+    // Not only do jQuery objects have a .length, but each DOM
+    // element reference can be accessed by its index, like arrays.
+    for ( var i = 0; i &lt; elems.length; i++ ) {
+      console.log(elems[i]);
+    }
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/length/"><code>.length</code> property</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Getting DOM Elements</h1>
+  <pre class="brush:js class-name:l20">
+    // Get a single DOM element reference from the current jQuery
+    // object, at a specific index.
+    $("p")[0];
+
+    // This also works.
+    $("p").get(0);
+
+    // If you call .get() with no index, it returns an array of DOM
+    // element references.
+    $("p").get();
+
+    // So, while you can do this, because .eq returns a jQuery object:
+    $("p").eq(0).html("I was selected.");
+
+    // This will fail, because .get returns a DOM element:
+    $("p").get(0).html("This is going to fail!");
+
+    // But this will work, because .innerHTML is a native DOM method:
+    $("p").get(0).innerHTML = "But this works.";
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/get/"><code>.get()</code> method</a>
+    <a href="http://api.jquery.com/eq/"><code>.eq()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Selecting One Element</h1>
+  <p class="subhead">...or no elements at all!</p>
+  <pre class="brush:js class-name:l20">
+    // Reduce the set of matched elements to the one at the specified index.
+    $("p").eq(0).html("I was selected.");
+
+    // If no elements match, the resulting set is empty, and chained methods
+    // fail gracefully.
+    $("p").eq(9001).html("This fails gracefully.");
+
+    // Reduce the set of matched elements to the first element.
+    $("li").first().html("I was also selected.");
+
+    // Reduce the set of matched elements to the last element.
+    $("li").last().html("Me too!");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/eq/"><code>.eq()</code> method</a>
+    <a href="http://api.jquery.com/first/"><code>.first()</code> method</a>
+    <a href="http://api.jquery.com/last/"><code>.last()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Implicit Iteration</h1>
+  <p>jQuery iterates, so you don't have to.</p>
+</section>
+
+<section>
+  <h1>Explicit Iteration</h1>
+  <p class="subhead">(for when implicit iteration isn't enough)</p>
+  <pre class="brush:js class-name:l20">
+    // Using the .each method, the selected elements can be
+    // explicitly iterated over.
+
+    $("li").each(function(index, elem) {
+      // this: The current DOM element.
+      // index: The current element index, in the set.
+      // elem: The current DOM element.
+      $(this).prepend("<b>" + index + "</b> ");
+    });
+
+
+    // Note that return works like continue, while return false
+    // works like break.
+
+    $("li").each(function(index) {
+      if ( index == 2 ) {
+        return;
+      } else if ( index == 7 ) {
+        return false;
+      }
+
+      $(this).append(" <b>" + index + "</b>");
+    });
+
+
+    // Often, .each is used to create a per-element closure.
+
+    var state = false; // Global.
+    $("a").click(function() {
+      state = !state;
+      console.log(state, $(this).attr("href"));
+      return false;
+    });
+
+    $("a").each(function() {
+      var state = false; // Per-element.
+      $(this).click(function() {
+        state = !state;
+        console.log(state, $(this).attr("href"));
+        return false;
+      });
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/each/"><code>.each()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>jQuery</code> Function</h1>
+  <p class="subhead">Creating elements.</p>
+  <pre class="brush:js class-name:l20">
+    // Create a new element, in memory. These all do the same thing:
+    $("&lt;p&gt;");
+    $("&lt;p/&gt;");
+    $("&lt;p&gt;&lt;/p&gt;");
+
+    // When creating elements, you can add attributes and content.
+    $('&lt;p id=&quot;test&quot; class=&quot;fancy&quot;&gt;&lt;b&gt;hello&lt;/b&gt; &lt;i&gt;world&lt;/i&gt;&lt;/p&gt;');
+
+    // As of jQuery 1.4, you can also pass in a configuration object as the
+    // second parameter to the jQuery function when creating a new element.
+    $("&lt;p/&gt;", {
+      id: "test",
+      className: "fancy",
+      html: "&lt;b&gt;hello&lt;/b&gt; &lt;i&gt;world&lt;/i&gt;",
+      click: function() {
+        console.log($(this).text());
+      }
+    });
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#974">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/jQuery/"><code>jQuery()</code> function</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>jQuery</code> Function</h1>
+  <p class="subhead">&ldquo;Yo, dawg&rdquo; edition.</p>
+  <pre class="brush:js class-name:l16">
+    // Pass a function into the jQuery function, and that code will be
+    // executed when the DOM is ready.
+
+    $(function() {
+      console.log("The DOM is ready!");
+    });
+
+    // You can write this the "long way" if you really want.
+
+    $(document).ready(function() {
+      console.log("The DOM is ready!");
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/ready/"><code>.ready()</code> method</a>
+    <a href="http://api.jquery.com/jQuery/"><code>jQuery()</code> function</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Recap</h1>
+  <ul>
+    <li>The <code>jQuery</code> function</li>
+    <li>Array-like collections of elements</li>
+    <li>Getting DOM Elements</li>
+    <li>Selecting One Element</li>
+    <li>Creating Elements</li>
+    <li>DOM Ready</li>
+    <li>Implicit Iteration</li>
+    <li>Explicit Iteration</li>
+  </ul>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>jQuery: Enhancing with Effects</title>
+  <link type="text/css" rel="stylesheet" href="preso/sh/styles/shCoreDefault.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/dzslides.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/custom.css"/>
+
+  <script type="text/javascript" src="preso/js/jquery.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shCore.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shAutoloader.js"></script>
+  <script type="text/javascript" src="preso/js/dzslides.js"></script>
+  <script type="text/javascript" src="preso/js/custom.js"></script>
+</head>
+<body>
+
+<section>
+  <h1>Enhancing with Effects</h1>
+  <div style="width:820px;padding-top:1em" class="smaller">
+    <div style="width:300px;float:right">
+      <a href="http://bocoup.com/">
+        <img style="display:block;margin:0.4em auto 0" src="media/logo/bocoup-200.png" alt="bocoup">
+        <p style="margin:0">bocoup</p>
+      </a>
+    </div>
+    <div style="width:500px;float:right">
+      <h3 style="margin-bottom:0">&ldquo;Cowboy&rdquo; Ben Alman</h3>
+      <p class="smaller">
+        <a href="http://benalman.com/">benalman.com</a><br/>
+        <a href="http://github.com/cowboy/">github.com/cowboy</a><br/>
+        <a href="http://twitter.com/cowboy">@cowboy</a><br/>
+      </p>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+</section>
+
+<section>
+  <h1>The Basics</h1>
+</section>
+
+<section>
+  <h1>Hiding &amp; Showing</h1>
+  <pre class="brush:js class-name:l20">
+    // Hide all elements.
+    $("p").hide();
+
+    // Show all elements.
+    $("p").show();
+
+    // Toggle visibility of all elements.
+    $("p").toggle();
+
+    // Hide all elements, using a fancy visual effect.
+    $("p").hide("slow");
+
+    // Show all elements, using a fancy visual effect.
+    $("p").show("fast");
+
+    // Toggle visibility of all elements, using a fancy visual effect.
+    $("p").toggle(2000);
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/hide/"><code>.hide()</code> method</a>
+    <a href="http://api.jquery.com/show/"><code>.show()</code> method</a>
+    <a href="http://api.jquery.com/toggle/"><code>.toggle()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Instant vs Queued</h1>
+  <p class="subhead">("instant" methods execute first, followed by queued effects methods)</p>
+  <pre class="brush:js class-name:l20">
+    // Why doesn't this do what you think it does...
+    $("li").hide("slow").show();
+
+    // While this does?
+    $("li").hide("slow").show("slow");
+
+    // Passing a callback to an animation method ensures that it
+    // executes after the animation completes.
+    $("li").hide("slow", function() {
+      $(this).show();
+    });
+
+    // Specifying any duration, even 0, causes the method to be
+    // pushed onto the element's effects queue.
+    $("li").hide("slow").show(0);
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/hide/"><code>.hide()</code> method</a>
+    <a href="http://api.jquery.com/show/"><code>.show()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The Effects Queue</h1>
+  <p>A per-element queue of effects methods.</p>
+</section>
+
+<section>
+  <h1>The <code>.queue</code> Method</h1>
+  <p class="subhead">(and friends)</p>
+  <pre class="brush:js class-name:l20">
+    // If you want to execute "instant" methods in a queue, you need
+    // to use the .queue method.
+
+    $("p")
+      .hide()
+      .fadeIn("slow")
+      .queue(function() {
+        $(this)
+          .css("color", "red")
+          .dequeue();                     // The jQuery pre-1.4 way.
+      })
+      .delay(1000)
+      .queue(function(next) {
+        $(this).css("color", "green");
+        next();                           // The jQuery 1.4+ way.
+      });
+
+
+    // How would you queue up a rainbow of color changes with a
+    // half-second delay between each color change?
+
+    $(":header, p, li, img, :input, label").each(function() {
+      var elem = $(this),
+          colors = "red orange yellow green blue indigo violet".split(" ");
+
+      $.each(colors, function(index, color) {
+        if ( index > 0 ) {
+          elem.delay(500);
+        }
+
+        elem.queue(function(next) {
+          elem.css("background-color", color);
+          next();
+        });
+      });
+    })
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/queue/"><code>.queue()</code> method</a>
+    <a href="http://api.jquery.com/dequeue/"><code>.dequeue()</code> method</a>
+    <a href="http://api.jquery.com/delay/"><code>.delay()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>.clearQueue</code> Method</h1>
+  <pre class="brush:js class-name:l16">
+    // What does per-element mean, exactly?
+
+    // When an animated element is clicked, clear its queue.
+
+    $(document).delegate(":animated", "click", function() {
+      $(this).clearQueue();
+    });
+
+    // Queue a whole bunch of effects on a whole bunch of elements.
+
+    $(":header, p, li, img, :input, label").show().each(function() {
+      for ( var i = 0; i < 100; i++ ) {
+        $(this).fadeOut(500).fadeIn(500);
+      }
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/clearQueue/"><code>.clearQueue()</code> method</a>
+    <a href="http://api.jquery.com/animated-selector/"><code>:animated</code> selector</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>.stop</code> Method</h1>
+  <p class="subhead"></p>
+  <pre class="brush:js class-name:l20">
+    // When an animated element is clicked, stop its animation where
+    // it is, and clear its queue.
+
+    $(document).delegate(":animated", "click", function() {
+      $(this).stop(true);
+    });
+
+    // Queue a whole bunch of effects on a whole bunch of elements.
+
+    $(":header, p, li, img, :input, label").show().each(function() {
+      for ( var i = 0; i < 100; i++ ) {
+        $(this).fadeOut(500).fadeIn(500);
+      }
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/stop/"><code>.stop()</code> method</a>
+    <a href="http://api.jquery.com/animated-selector/"><code>:animated</code> selector</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Fading</h1>
+  <pre class="brush:js class-name:l20">
+    // Fade out all elements (at the default duration).
+    $("p").fadeOut();
+
+    // Fade in all elements (at the default duration).
+    $("p").fadeIn();
+
+    // Toggle visibility of all elements (at the default duration).
+    $("p").fadeToggle();
+
+    // Of course, a duration and callback can be passed.
+    $("p")
+      .fadeOut("slow")
+      .fadeIn(2000, function() {
+        $(this).css("color", "red");
+      });
+
+    // Fade all elements to a specified opacity.
+    $("p").fadeTo("slow", 0.5);
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/fadeIn/"><code>.fadeIn()</code> method</a>
+    <a href="http://api.jquery.com/fadeOut/"><code>.fadeOut()</code> method</a>
+    <a href="http://api.jquery.com/fadeToggle/"><code>.fadeToggle()</code> method</a>
+    <a href="http://api.jquery.com/fadeTo/"><code>.fadeTo()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Sliding</h1>
+  <pre class="brush:js class-name:l20">
+    // Slide up all elements (at the default duration).
+    $("p").slideUp();
+
+    // Slide down all elements (at the default duration).
+    $("p").slideDown();
+
+    // Toggle visibility of all elements (at the default duration).
+    $("p").slideToggle();
+
+    // Of course, a duration and callback can be passed.
+    $("p")
+      .slideUp("slow")
+      .slideToggle(2000, function() {
+        $(this).css("color", "red");
+      });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/slideUp/"><code>.slideUp()</code> method</a>
+    <a href="http://api.jquery.com/slideDown/"><code>.slideDown()</code> method</a>
+    <a href="http://api.jquery.com/slideToggle/"><code>.slideToggle()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Let's get <i>Fancy</i></h1>
+</section>
+
+<section>
+  <h1>The <code>.animate</code> Method</h1>
+  <pre class="brush:js class-name:l20">
+    $("p")
+
+      // Set a few initial CSS properties.
+      .css({
+        color: "blue",
+        opacity: 1
+      })
+
+      // Animate these properties to these values.
+      .animate(
+        {
+          opacity: 0.5,
+          left: "+=50",
+          height: "toggle"
+        },
+
+        // Over this duration.
+        1000,
+
+        // And when done, execute this callback.
+        function() {
+          $(this).css("color", "red");
+        }
+      );
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/animate/"><code>.animate()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Utilizing <code>.stop</code></h1>
+  <pre class="brush:js class-name:l20">
+    // Animations get queued, so...
+
+    $("li").hover(function() {
+      $(this).animate({ left: "+=20px" });
+    }, function() {
+      $(this).animate({ left: "-=20px" });
+    });
+
+
+    // Use .stop(true) to clear the queue, but...
+
+    $("li").hover(function() {
+      $(this).stop(true).animate({ left: "+=20px" });
+    }, function() {
+      $(this).stop(true).animate({ left: "-=20px" });
+    });
+
+
+    // Use .stop(true, true) to both clear the queue AND to jump the
+    // previous animation to the end.
+
+    $("li").hover(function() {
+      $(this).stop(true, true).animate({ left: "+=20px" });
+    }, function() {
+      $(this).stop(true, true).animate({ left: "-=20px" });
+    });
+
+
+    // By using absolute values, we no longer need to jump the previous
+    // animation to the end.
+
+    $("li").hover(function() {
+      $(this).stop(true).animate({ left: 20 });
+    }, function() {
+      $(this).stop(true).animate({ left: 0 });
+    });
+
+
+    // By experimenting with a combination of absolute values and the .stop
+    // method, we can come up with the best-looking visual effect.
+
+    $("li").hover(function() {
+      $(this).stop(true).animate({ left: 20 });
+    }, function() {
+      $(this).animate({ left: 0 });
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/animate/"><code>.animate()</code> method</a>
+    <a href="http://api.jquery.com/stop/"><code>.stop()</code> method</a>
+    <a href="http://api.jquery.com/animated-selector/"><code>:animated</code> selector</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Let's get <b><i>CRAZY</i></b></h1>
+</section>
+
+<section>
+  <h1>What the !@#$?</h1>
+  <pre class="brush:js class-name:l20">
+    // Iterate over a bunch of elements.
+    $(":header, p, li").each(function() {
+      var elem = $(this),
+          text = elem.text();
+
+      // Set a completely made up CSS property on the element. This does
+      // absolutely nothing visually.
+      elem.css({ fake_property: 0 })
+
+        // Animate that property from the current value (0) to the new value (1).
+        .animate({ fake_property: 1 }, {
+
+          // Animate over a few seconds.
+          duration: 2000,
+
+          // Using a custom easing function.
+          easing: "swing",
+
+          // For each animation "tick" execute this function.
+          step: function(pct) {
+            var chars = parseInt(text.length * pct);
+            elem.text(text.slice(0, chars));
+          }
+        });
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/animate/"><code>.animate()</code> method</a>
+    <a href="http://gsgd.co.uk/sandbox/jquery/easing/jquery.easing.1.3.js">jQuery Easing Plugin</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Disabling Animations</h1>
+  <pre class="brush:js class-name:l20">
+    // Toggle all paragraphs, by fading.
+    $("p").toggle("slow");
+
+    // Disable all jQuery animations.
+    $.fx.off = true;
+
+    // Toggle all paragraphs, by fading. Except.. no fading!
+    $("p").toggle("slow");
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/jQuery.fx.off/"><code>jQuery.fx.off</code> property</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Animating Sequentially</h1>
+  <p class="subhead">(this is getting a little more advanced)</p>
+  <pre class="brush:js class-name:l20">
+    // It's easy to animate a group of element simultaneously...
+
+    $("li").hide().fadeIn(1000);
+
+    // But how would you animate those elements sequentially?
+
+    function next(elems) {
+
+      // Fade in the first passed element.
+      elems.eq(0).fadeIn(250, function() {
+
+        // When the animation completes, pass all but the first
+        // element back into `next`.
+        next(elems.slice(1));
+      });
+    }
+
+    // Call `next` with a collection of already-hidden elements.
+
+    next( $("li").hide() );
+
+    // Extra credit: Call `next` on every visible element and watch
+    // the DOM re-animate!
+
+    next( $(":visible").hide() );
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/slice/"><code>.slice()</code> method</a>
+    <a href="http://twitter.com/cowboy/status/42753115878989824">The original tweet</a>
+    <a href="https://gist.github.com/850322">jQuery seq plugin</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Recap</h1>
+  <ul>
+    <li>Hiding &amp; Showing</li>
+    <li>Fading &amp; Sliding</li>
+    <li>Instant vs Queued methods</li>
+    <li>Effects queues are per-element</li>
+    <li>Clearing &amp; stopping queues</li>
+    <li>Animate &amp; Step</li>
+  </ul>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>"N" Clicks</title>
+<script type="text/javascript" src="../preso/js/jquery.js"></script>
+<style type="text/css">
+  .highlight { color: #0a0; font-weight: 700; }
+
+  button { display: block; margin-top: 1em; }
+</style>
+<script type="text/javascript">
+  $(function(){
+
+    // Prevent the default action on form submit.
+    $("form").something...
+
+    // Select buttons.
+    $("button").each(function() {
+      var elem = $(this),
+          counter = elem.something...
+          plural = elem.something...
+
+      // The click handler is named so that it can be unbound via reference.
+      function handler() {
+
+        // Get the counter text, and subtract one. When the subtraction
+        // happens, the .text String is coerced into a Number.
+        var n = something...
+
+        // If n has been decremented all the way, unbind the event handler
+        // and disable the button.
+        if ( n == 0 ) {
+          elem.something...
+        }
+
+        // Update the counter's text.
+        counter.something...
+
+        // Update the plural's text.
+        plural.something...
+      }
+
+      // Bind click handler.
+      elem.something...
+    });
+
+  });
+</script>
+</head>
+<body>
+  <h1>These buttons would be more awesome if they counted down.</h1>
+
+  <p>With jQuery, you must:</p>
+  <ul>
+    <li>prevent the form submit default action.</li>
+    <li>allow each button to be clicked no more than the specified number of times.</li>
+    <li>unbind the event handler and disable the button when the button can no longer be clicked.</li>
+    <li>change the number accordingly.</li>
+    <li>pluralize the word "time" accordingly.</li>
+  </ul>
+
+  <p>Remember:</p>
+  <ul>
+    <li>You can use <code>.each</code> to create a per-button "context."</li>
+    <li>Form elements can be disabled by setting the "disabled" attribute.</li>
+  </ul>
+
+  <a href="http://api.jquery.com/">jQuery API documentation</a>
+
+  <form action="">
+    <button>I can be clicked <span>1</span> more time<span></span>!</button>
+    <button>I can be clicked <span>2</span> more time<span>s</span>!</button>
+    <button>I can be clicked <span>3</span> more time<span>s</span>!</button>
+    <button>I can be clicked <span>4</span> more time<span>s</span>!</button>
+    <button>I can be clicked <span>5</span> more time<span>s</span>!</button>
+  </form>
+</body>
+</html>

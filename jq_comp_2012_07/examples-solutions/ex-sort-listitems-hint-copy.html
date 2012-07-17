@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sorting Lists</title>
+<script type="text/javascript" src="../preso/js/jquery.js"></script>
+<style type="text/css">
+  .highlight { color: #0a0; font-weight: 700; }
+
+  #content { font-family: monospace; }
+</style>
+<script type="text/javascript">
+  $(function(){
+
+    // Iterate over each list.
+    $("#content ul, #content ol").each(function() {
+
+      // The list.
+      var list = $(this);
+
+      // Get list items, as an array.
+      var elems = list.children().get();
+
+      // Sort the array, based on element .text() length.
+      elems.sort(function(a, b) {
+        return $(a).text().length - $(b).text().length;
+      });
+
+      // Append all elements to the parent list.
+      list.append(elems);
+    });
+
+  });
+</script>
+</head>
+<body>
+  <h1>These lists would be more awesome if they were sorted.</h1>
+
+  <p>With jQuery, you must:</p>
+  <ul>
+    <li>sort each list's items by text length.</li>
+    <li>each list item must stay in its own list.</li>
+  </ul>
+
+  <p>Remember:</p>
+  <ul>
+    <li>jQuery objects are Array-like.</li>
+    <li>jQuery objects are collections of DOM elements.</li>
+    <li><code>.append</code> doesn't clone an element, it moves it.</li>
+  </ul>
+
+  <a href="http://api.jquery.com/">jQuery API documentation</a>
+  |
+  <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array">JavaScript Array documentation</a>
+
+  <h2>The Lists</h2>
+  <div id="content">
+    <ul>
+      <li>List 1, Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+      <li>List 1, Aliquam et erat neque, sit amet aliquet tortor.</li>
+      <li>List 1, Duis auctor magna et risus pulvinar tincidunt.</li>
+      <li>List 1, Suspendisse scelerisque dapibus ante, eu adipiscing magna convallis sit amet.</li>
+      <li>List 1, Duis eget ligula et ante porttitor sollicitudin.</li>
+    </ul>
+    <ol>
+      <li>List 2, Proin lacinia nisi quis purus condimentum et fermentum mi pulvinar.</li>
+      <li>List 2, Sed molestie malesuada leo, et placerat nisi dignissim in.</li>
+      <li>List 2, In nec lorem a lectus auctor hendrerit.</li>
+      <li>List 2, Quisque eleifend dolor eget mauris tincidunt auctor interdum mi varius.</li>
+      <li>List 2, Duis sit amet nisl sit amet libero imperdiet pulvinar.</li>
+      <li>List 2, Mauris suscipit sapien sed justo dignissim nec elementum ligula porttitor.</li>
+      <li>List 2, Suspendisse sit amet metus sit amet orci ultricies imperdiet eget lacinia mauris.</li>
+      <li>List 2, Ut sit amet elit ut nunc elementum placerat.</li>
+    </ol>
+    <ul>
+      <li>List 3, Ut feugiat ultricies sapien, in consectetur mi eleifend vel.</li>
+      <li>List 3, Maecenas sagittis mattis nibh, et eleifend erat hendrerit id.</li>
+      <li>List 3, Curabitur in odio eu arcu volutpat lobortis eget ut erat.</li>
+      <li>List 3, Sed hendrerit cursus est, eget porta urna adipiscing eget.</li>
+      <li>List 3, Mauris eget libero eros, id fermentum nulla.</li>
+    </ul>
+  </div>
+</body>
+</html>

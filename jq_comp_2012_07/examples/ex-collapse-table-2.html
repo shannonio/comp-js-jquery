@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Collapsible Table</title>
+<script type="text/javascript" src="../preso/js/jquery.js"></script>
+<style type="text/css">
+  .highlight { color: #0a0; font-weight: 700; }
+
+  table { width: 700px; margin-top: 1em; }
+  th, td { padding: 4px; text-align: left; background: #eee; margin: 4px; width: 50%; border: 1px solid #444; }
+  th, th a { background: #777; color: #fff; }
+  th a { float: right; }
+
+  tr.wrapped td { padding: 0; }
+  tr.wrapped div { padding: 4px; }
+</style>
+<script type="text/javascript">
+  $(function(){
+
+    // Your code goes here!
+
+  });
+</script>
+</head>
+<body>
+  <h1>This table would be more awesome if it was collapsible.</h1>
+
+  <p>With jQuery, you must:</p>
+  <ul>
+    <li>add a clickable link to each TH table header.</li>
+    <li>when the link is clicked, the visibility of all following non-header rows should be toggled.</li>
+    <li>the link's text should change between "collapse" and "expand" appropriately.</li>
+    <li>all non-header rows should be collapsed by default.</li>
+    <li class="highlight">rows should animate using sliding. <i>Note: wrapping the inside of TD elements with a DIV will help the animation.</i></li>
+  </ul>
+
+  <a href="http://api.jquery.com/">jQuery API documentation</a>
+
+  <table>
+    <tr>
+      <th colspan="2">
+        This is a sample header
+      </th>
+    </tr>
+    <tr>
+      <td>One table cell</td>
+      <td>Another table cell</td>
+    </tr>
+    <tr>
+      <th colspan="2">
+        This is another sample header
+      </th>
+    </tr>
+    <tr>
+      <td colspan="2">This table cell is chock full of content!</td>
+    </tr>
+    <tr>
+      <td colspan="2">Another table cell with lots of good content!</td>
+    </tr>
+    <tr>
+      <th colspan="2">
+        Yet another sample header
+      </th>
+    </tr>
+    <tr>
+      <td colspan="2">
+        This table cell is chock full of content!<br>
+        This table cell is chock full of content!<br>
+        Take it to the bridge!!</br>
+        This table cell is chock full of content! (reprise)
+      </td>
+    </tr>
+    <tr>
+      <th colspan="2">
+        This is a sample header
+      </th>
+    </tr>
+    <tr>
+      <td>Some more table cells</td>
+      <td>Yep, another table cell</td>
+    </tr>
+    <tr>
+      <td>Table cells are super fun</td>
+      <td>Don't we love table cells</td>
+    </tr>
+  </table>
+</body>
+</html>

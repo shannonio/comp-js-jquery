@@ -1,0 +1,10 @@
+{
+  "name": "Bob",
+  "species": "Gallus gallus domesticus",
+  "color": "red"
+}
+
+{
+  "status": "ok",
+  "content": "<h1 style=\"color:red\">Bob, <i>Gallus gallus domesticus</i></h1>"
+}

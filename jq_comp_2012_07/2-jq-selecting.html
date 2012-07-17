@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>jQuery: Selecting Elements</title>
+  <link type="text/css" rel="stylesheet" href="preso/sh/styles/shCoreDefault.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/dzslides.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/custom.css"/>
+
+  <script type="text/javascript" src="preso/js/jquery.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shCore.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shAutoloader.js"></script>
+  <script type="text/javascript" src="preso/js/dzslides.js"></script>
+  <script type="text/javascript" src="preso/js/custom.js"></script>
+</head>
+<body>
+
+<section>
+  <h1>Selecting Elements</h1>
+  <div style="width:820px;padding-top:1em" class="smaller">
+    <div style="width:300px;float:right">
+      <a href="http://bocoup.com/">
+        <img style="display:block;margin:0.4em auto 0" src="media/logo/bocoup-200.png" alt="bocoup">
+        <p style="margin:0">bocoup</p>
+      </a>
+    </div>
+    <div style="width:500px;float:right">
+      <h3 style="margin-bottom:0">&ldquo;Cowboy&rdquo; Ben Alman</h3>
+      <p class="smaller">
+        <a href="http://benalman.com/">benalman.com</a><br/>
+        <a href="http://github.com/cowboy/">github.com/cowboy</a><br/>
+        <a href="http://twitter.com/cowboy">@cowboy</a><br/>
+      </p>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+</section>
+
+<section>
+  <h1>The DOM</h1>
+  <p class="subhead">(<b>D</b>ocument <b>O</b>bject <b>M</b>odel)</p>
+  <pre class="brush:html">
+    &lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+      &lt;body&gt;
+        &lt;div&gt;
+          &lt;p&gt;&lt;a href=&quot;#test&quot;&gt;I am a Link!&lt;/a&gt;&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;p&gt;&lt;a href=&quot;#test&quot;&gt;I am another Link!&lt;/a&gt;&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  </pre>
+</section>
+
+<section>
+  <h1>Basic Selectors</h1>
+  <pre class="brush:js class-name:l20">
+    // Select by ID or tag name. Very fast!
+    $("#list1")
+    $("p")
+
+    // Select by class name. Also very fast.. but not in every browser.
+    $(".fancy")
+
+    // Select everything on the page. Not even remotely fast.
+    $("*")
+
+    // Multiple selections in one collection! (logical OR)
+    $("#list1, .fancy, p")
+    
+    // Getting specific (Logical AND)
+    $("ul#list1.fancy")
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/selectors/basic-css-selectors/">Basic Selectors</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Too Specific!</h1>
+  <p class="subhead">or &ldquo;Beware of Selector Overkill&rdquo;</p>
+  <pre class="brush:js class-name:l16">
+    // Could this complex selector:
+    $("body div#col1.col.first p#paragraph1")
+
+    // Be better written as this?
+    $("#col1 #paragraph1")
+
+    // Or even better yet, this?
+    $("#paragraph1")
+  </pre>
+  <aside>
+    <a href="http://paulirish.com/2009/perf/">Paul Irish: jQuery Anti-Patterns for Performance</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Hierarchical Selectors</h1>
+  <pre class="brush:js class-name:l20">
+    // Descendant. $("ancestor descendant")
+    $("ul a")
+
+    // Child. $("parent > child")
+    $("p > a")
+
+    // Next adjacent sibling. $("prev + next")
+    $("h4 + img")
+
+    // Next siblings. $("prev ~ siblings")
+    $("h2 ~ h3")
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/selectors/hierarchy-selectors/">Hierarchy Seletors</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Attribute Selectors</h1>
+  <p class="subhead">(very useful, but somewhat slow)</p>
+  <pre class="brush:js class-name:l16">
+    // Attribute equals value.
+    $('[alt="Bob"]')
+    $("[alt=\"Bob\"]")
+
+    // Escape #;&,.+*~':"!^$[]()=>|/"@ characters with \\. For example, if
+    // you need to select an input with name="names[]" you'll want to do:
+    $("input[name='names\\[\\]']")
+
+    // Attribute exists. $("[attr]")
+    $("[alt]")
+
+    // Attribute not equal (or does not exist). $("[attr!='value']")
+    $("[alt!='Bob']")
+
+    // Attribute starts with. $("[attr^='value']")
+    $("[href^='#']")
+
+    // Attribute ends with. $("[attr$='value']")
+    $("[src$='png']")
+
+    // Attribute contains string. $("[attr*='value']")
+    $("[id*='graph']")
+
+    // Attribute contains word. $("[attr~='value']")
+    $("[class~='fancy']")
+
+    // Multiple attributes (logical AND)
+    $("[alt][alt!='Bob']")
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/selectors/attribute-selectors/">Attribute Selectors</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Not Specific Enough</h1>
+  <p class="subhead">or &ldquo;Beware the Implicit Asterisk&rdquo;</p>
+  <pre class="brush:js class-name:l16">
+    // Note that this:
+    $("[type=text]")
+
+    // Is effectively the same as this:
+    $("*[type=text]")
+
+    // Write more performant selectors by better qualifying them.
+    $("input[type=text]")
+  </pre>
+  <aside>
+    <a href="http://paulirish.com/2009/perf/">Paul Irish: jQuery Anti-Patterns for Performance</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Filtering Selectors</h1>
+</section>
+
+<section>
+  <h1>Basic</h1>
+  <pre class="brush:js class-name:l20">
+    // The first matched element.
+    $(":first")
+
+    // The last matched element.
+    $(":last")
+
+    // The nth element (0-indexed).
+    $(":eq(n)")
+
+    // All elements with an index less than n (0-indexed).
+    $(":lt(n)")
+
+    // All elements with an index greater than n (0-indexed).
+    $(":gt(n)")
+
+    // Even elements (0-indexed).
+    $(":even")
+
+    // Odd elements (0-indexed).
+    $(":odd")
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/selectors/basic-filter-selectors/">Basic Filter Selectors</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Other Selectors</h1>
+  <pre class="brush:js class-name:l16">
+    // All elements that don't match the given selector.
+    $(":not(selector)")
+
+    // Header elements (h1, h2, h3, etc).
+    $(":header")
+
+    // Currently-animating elements.
+    $(":animated")
+
+    // All elements that are hidden.
+    $(":hidden")
+
+    // All elements that are visible.
+    $(":visible")
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/selectors/basic-filter-selectors/">Basic Filter Selectors</a>
+    <a href="http://api.jquery.com/hidden-selector/"><code>:hidden</code> selector</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Child</h1>
+  <pre class="brush:js class-name:l16">
+    // All elements that are the first child of their parent.
+    $(":first-child")
+
+    // All elements that are the last child of their parent.
+    $(":last-child")
+
+    // All elements that are the only child of their parent.
+    $(":only-child")
+
+    // All elements that are the nth child of their parent (1-indexed).
+    $(":nth-child(index/even/odd/equation)")
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/selectors/child-filter-selectors/">Child Filter Selectors</a>
+    <a href="http://api.jquery.com/nth-child-selector/"><code>:nth-child()</code> selector</a>
+  </aside>
+</section>
+
+<section>
+  <h1>There's a Difference</h1>
+  <p class="subhead">(Do you know what it is?)</p>
+  <pre class="brush:js">
+    // These are subtly different, but how?
+    
+    $("li:first").css("color", "red");
+    $("li:first-child").css("color", "red");
+    
+    // How about these?
+    
+    $("li:even").css("color", "red");
+    $("li:nth-child(even)").css("color", "red");
+  </pre>
+</section>
+
+<section>
+  <h1>Content</h1>
+  <pre class="brush:js class-name:l16">
+    // All elements that contain the specified text.
+    $(":contains(text)")
+
+    // All elements that contain at least one element matching selector.
+    $(":has(selector)")
+
+    // All elements that have no children (including text nodes).
+    $(":empty")
+
+    // All elements that are the parent of another element
+    // (including text nodes).
+    $(":parent")
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/selectors/content-filter-selector/">Content Filter Selectors</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Take note!</h1>
+  <p class="subhead">(Because you'll use this, someday)</p>
+  <pre class="brush:js">
+    // While this selects matching descendant elements (a)...
+    
+    $("p a").addClass("fancy");
+    
+    // This selects matching ancestor elements (p).
+    
+    $("p:has(a)").addClass("fancy");
+  </pre>
+</section>
+
+<section>
+  <h1>Forms</h1>
+  <pre class="brush:js class-name:l20">
+    // All button elements and elements of type button.
+    $(":button")
+
+    // All elements of type checkbox.
+    $(":checkbox")
+
+    // All elements that are checked.
+    $(":checked")
+
+    // All elements that are disabled.
+    $(":disabled")
+
+    // All elements that are enabled.
+    $(":enabled")
+
+    // All elements of type file.
+    $(":file")
+
+    // All elements of type image.
+    $(":image")
+
+    // All input, textarea, select and button elements.
+    $(":input")
+
+    // All elements of type password.
+    $(":password")
+
+    // All elements of type radio.
+    $(":radio")
+
+    // All elements of type reset.
+    $(":reset")
+
+    // All elements that are selected.
+    $(":selected")
+
+    // All elements of type submit.
+    $(":submit")
+
+    // All elements of type text.
+    $(":text")
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/selectors/form-selectors/">Form Selectors</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Recap</h1>
+  <ul>
+    <li>The DOM</li>
+    <li>Basic Selectors: Class, ID, Tag</li>
+    <li>Hierarchical Selectors</li>
+    <li>Attribute Selectors</li>
+    <li>Filtering Selectors</li>
+    <li>Not-Specific Enough</li>
+    <li>Too-Specific</li>
+  </ul>
+</section>
+
+</body>
+</html>

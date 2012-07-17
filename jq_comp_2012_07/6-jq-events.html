@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>jQuery: Handling Events</title>
+  <link type="text/css" rel="stylesheet" href="preso/sh/styles/shCoreDefault.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/dzslides.css"/>
+  <link type="text/css" rel="stylesheet" href="preso/css/custom.css"/>
+
+  <script type="text/javascript" src="preso/js/jquery.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shCore.js"></script>
+  <script type="text/javascript" src="preso/sh/scripts/shAutoloader.js"></script>
+  <script type="text/javascript" src="preso/js/dzslides.js"></script>
+  <script type="text/javascript" src="preso/js/custom.js"></script>
+</head>
+<body>
+
+<section>
+  <h1>Handling Events</h1>
+  <div style="width:820px;padding-top:1em" class="smaller">
+    <div style="width:300px;float:right">
+      <a href="http://bocoup.com/">
+        <img style="display:block;margin:0.4em auto 0" src="media/logo/bocoup-200.png" alt="bocoup">
+        <p style="margin:0">bocoup</p>
+      </a>
+    </div>
+    <div style="width:500px;float:right">
+      <h3 style="margin-bottom:0">&ldquo;Cowboy&rdquo; Ben Alman</h3>
+      <p class="smaller">
+        <a href="http://benalman.com/">benalman.com</a><br/>
+        <a href="http://github.com/cowboy/">github.com/cowboy</a><br/>
+        <a href="http://twitter.com/cowboy">@cowboy</a><br/>
+      </p>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+</section>
+
+<section>
+  <h1>What is an Event?</h1>
+  <p>Stuff Happens &#x2192; Code Executes</p>
+</section>
+
+<section>
+  <h1>Events without jQuery</h1>
+  <pre class="brush:js">
+    // Event handler.
+
+    function handle( e ) {
+      console.log( "Link '" + this.id + "' was just clicked!" );
+      return false;
+    }
+
+
+    // Get all "a" elements.
+
+    var elems = document.getElementsByTagName("a");
+
+
+    // Loop through elements, binding the handler.
+
+    for ( var i = 0; i < elems.length; i++ ) {
+      var elem = elems[ i ];
+
+      if ( elem.addEventListener ) {
+        // Non-IE browsers.
+        elem.addEventListener( "click", function(e){
+          if ( handle.apply( this, arguments ) === false ) {
+            e.preventDefault();
+          }
+        }, false );
+
+      } else if ( elem.attachEvent ) {
+        // IE browsers do things a bit differently.
+        elem.attachEvent( "onclick", (function(elem){
+
+          // IE executes event handlers in the incorrect scope.
+          elem[ "click" + handle ] = handle;
+
+          return function(){
+            // Execute event handler method on "elem" object.
+            window.event.returnValue = elem[ "click" + handle ]( window.event );
+          };
+        })(elem));
+      }
+    }
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#1550">jQuery 1.4.2 Source</a>
+    <a href="http://ejohn.org/blog/flexible-javascript-events/">John Resig: Flexible Javascript Events</a>
+    <a href="http://www.quirksmode.org/js/events_advanced.html">QuirksMode: Advanced event registration models</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Events with jQuery</h1>
+  <pre class="brush:js">
+    // This does the same thing.
+
+    $("a").bind( "click", function() {
+      console.log( "Link '" + this.id + "' was just clicked!" );
+      return false;
+    });
+  </pre>
+</section>
+
+<section>
+  <h1>Two Ways to Bind</h1>
+  <pre class="brush:js class-name:l20">
+    // The explicit way.
+
+    $("a").bind( "click", function() {
+      console.log( "I was just clicked!" );
+      return false;
+    });
+
+    // A convenient shortcut.
+
+    $("a").click(function() {
+      console.log( "I was just clicked!" );
+      return false;
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/bind/"><code>.bind()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Shortcut Methods</h1>
+  <p class="smaller hovers" style="max-width:25em;">
+    <span data-title="Mouse">click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave</span>
+    <span data-title="Keyboard">keydown keypress keyup</span>
+    <span data-title="Forms">blur change focus select submit</span>
+    <span data-title="Document Loading">load ready unload</span>
+    <span data-title="Browser Events">resize scroll error</span>
+    <span data-title="Special &ldquo;Focus&rdquo; Events">focusin focusout</span>
+  </p>
+  <aside>
+    <a href="http://api.jquery.com/category/events/form-events/">Form Events</a>
+    <a href="http://api.jquery.com/category/events/keyboard-events/">Keyboard Events</a>
+    <a href="http://api.jquery.com/category/events/mouse-events/">Mouse Events</a>
+    <a href="http://api.jquery.com/category/events/document-loading/">Document Loading Events</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The Event Handler</h1>
+  <p class="subhead">(this is the &ldquo;Code Executes&rdquo; part)</p>
+  <pre class="brush:js class-name:l16">
+    $("input").bind( "keydown",
+
+      // The event handler.
+
+      function( e ) {
+        // this: The current DOM element.
+        // e: The Event Object.
+
+        // Change the bg to red if backspace is pressed, otherwise green.
+        $(this).css( "background", e.which == 8 ? "tomato" : "lime" );
+      }
+
+    );
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/category/events/event-object/">Event Object</a>
+    <a href="http://api.jquery.com/bind/"><code>.bind()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The Event Object</h1>
+  <table>
+    <tr>
+      <td><code>.type</code></td>
+      <td>The event type (e.g. &ldquo;click&rdquo;).</td>
+    </tr>
+    <tr>
+      <td><code>.which</code></td>
+      <td>The button or key that was pressed.</td>
+    </tr>
+    <tr>
+      <td><code>.target</code></td>
+      <td>The DOM element where the event initiated.</td>
+    </tr>
+    <tr>
+      <td style="white-space:pre"><code>.pageX</code>, <code>.pageY</code></td>
+      <td>The mouse position when the event occurred, relative to the<br>top left of the page.</td>
+    </tr>
+    <tr>
+      <td><code>.data</code></td>
+      <td>Any data that was passed in when the event was bound.</td>
+    </tr>
+    <tr>
+      <td><code>.preventDefault()</code></td>
+      <td>Prevent the default action of the event (e.g. following a link).</td>
+    </tr>
+    <tr>
+      <td><code>.stopPropagation()</code></td>
+      <td>Stop the event from bubbling up the DOM to other elements.</td>
+    </tr>
+  </table>
+  <aside>
+    <a href="http://api.jquery.com/category/events/event-object/">Event Object</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Preventing Default</h1>
+  <p class="subhead">(prevent the default action of the event, e.g. following a link)</p>
+  <pre class="brush:js class-name:l20">
+    // You've all seen this before, right?
+
+    $("a").click(function() {
+      console.log( "I was just clicked!" );
+      return false;
+    });
+
+    // Prevent the default action more explicitly, using the
+    // event object.
+
+    $("a").click(function( e ) {
+      e.preventDefault();
+      console.log( "I was just clicked!" );
+    });
+
+    // This convenient shortcut just prevents the default action.
+    // (Added in jQuery 1.4.3)
+
+    $("a").click( false );
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.4.js.html#1835">jQuery 1.4.4 Source</a>
+    <a href="http://api.jquery.com/event.preventDefault/"><code>event.preventDefault()</code> method</a>
+  </aside>
+</section>
+
+
+<section>
+  <h1>Unbinding</h1>
+  <pre class="brush:js">
+    // Binding.
+
+    $("a").click(function( e ) {
+      console.log( "I was just clicked!" );
+      return false;
+    });
+
+    // Unbinding. Beware, this unbinds ALL bound click handlers!
+
+    $("a").unbind( "click" );
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/bind/"><code>.bind()</code> method</a>
+    <a href="http://api.jquery.com/unbind/"><code>.unbind()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Unbinding via Reference</h1>
+  <pre class="brush:js class-name:l16">
+    // Event handler.
+    function handle() {
+      console.log( "I was just clicked!" );
+      return false;
+    }
+
+    // Binding.
+    $("a").bind( "click", handle );
+
+    // Unbinding.
+    $("a").unbind( "click", handle );
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/bind/"><code>.bind()</code> method</a>
+    <a href="http://api.jquery.com/unbind/"><code>.unbind()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Using Namespaces</h1>
+  <pre class="brush:js class-name:l20">
+    // Binding with namespaces.
+    $("input").bind( "click.mynamespace", function() {
+      console.log( "I was just clicked!" );
+    });
+
+    $("input").bind( "focus.mynamespace", function() {
+      console.log( "I was just focused!" );
+    });
+
+    // This unbinds only handlers with the specified namespace.
+    $("input").unbind( ".mynamespace" );
+
+    // This unbinds only handlers with the specified type AND namespace.
+    $("input").unbind( "click.mynamespace" );
+  </pre>
+  <aside>
+    <a href="http://docs.jquery.com/Namespaced_Events">Namespaced Events</a>
+    <a href="http://api.jquery.com/bind/"><code>.bind()</code> method</a>
+    <a href="http://api.jquery.com/unbind/"><code>.unbind()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Triggering Events</h1>
+  <pre class="brush:js class-name:l20">
+    // Bind a click event handler.
+    $("li").click(function() {
+      $(this)
+        .addClass( "active" )
+        .siblings()
+          .removeClass( "active" );
+    });
+
+    // Trigger the event.
+    $("li:first-child").click();
+
+
+    // Bind a click event handler, more explicitly.
+    $("li").bind( "click.namespace", function() {
+      $(this)
+        .addClass( "active" )
+        .siblings()
+          .removeClass( "active" );
+    });
+
+    // Trigger the event, more explicitly.
+    $("li:first-child").trigger( "click" );
+
+    // Trigger the event with a namespace.
+    $("li:first-child").trigger( "click.mynamespace" );
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#2594">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/bind/"><code>.bind()</code> method</a>
+    <a href="http://api.jquery.com/trigger/"><code>.trigger()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Run only Once</h1>
+  <pre class="brush:js">
+    // While this will only log the first time an image is clicked,
+    // because it works on a per-element basis, it will log once for
+    // each image!
+
+    $("img").one( "click", function() {
+      var alt = $(this).attr( "alt" );
+      console.log( alt + " only logs the first time!" );
+    });
+
+
+    // How would you do the same thing using just .bind and .unbind?
+
+    function handler() {
+
+      // Unbind this event handler for this type of event on this element.
+      $(this).unbind( "click", handler );
+
+      var alt = $(this).attr( "alt" );
+      console.log( alt + " only logs the first time!" );
+    }
+
+    $("img").click( handler );
+
+
+    // How would you do the same thing, using just .bind and .unbind,
+    // so that it only logs once, period?
+
+    function handler() {
+
+      // Unbind this event handler for this type of event on this element.
+      elems.unbind( "click", handler );
+
+      var alt = $(this).attr( "alt" );
+      console.log( alt + " only logs the first time!" );
+    }
+
+    var elems = $("img").click( handler );
+
+
+    // Where might .one be useful?
+
+    // Load a complex widget's JavaScript only when a user interacts
+    // with it, deferring script loading until absolutely necessary.
+
+    $("#complex_widget").one( "mouseenter", function() {
+      $.getScript( "js/complex_widget.js" );
+    });
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#2361">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/one/"><code>.one()</code> method</a>
+    <a href="http://api.jquery.com/bind/"><code>.bind()</code> method</a>
+    <a href="http://api.jquery.com/unbind/"><code>.unbind()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>.hover</code> Method</h1>
+  <pre class="brush:js class-name:l20">
+    // The .hover() convenience method allows you to very easily
+    // specify mouseenter and mouseleave event handlers.
+
+    $("img").hover(
+      function() {
+        $(this).addClass( "hover" );
+      },
+      function() {
+        $(this).removeClass( "hover" );
+      }
+    );
+
+    // Of course, you can pass a single function that will be used
+    // for both mouseenter and mouseleave.
+
+    $("img").hover(function() {
+      $(this).toggleClass( "hover" );
+    });
+
+
+    // That's a bit prettier than doing it the explicit way.
+
+    $("img")
+      .mouseenter(function() {
+        $(this).addClass( "hover" );
+      })
+      .mouseleave(function() {
+        $(this).removeClass( "hover" );
+      });
+
+
+    // Or the very explicit way (which is still not that much code).
+
+    $("img")
+      .bind( "mouseenter", function() {
+        $(this).addClass( "hover" );
+      })
+      .bind( "mouseleave", function() {
+        $(this).removeClass( "hover" );
+      });
+  </pre>
+  <aside>
+    <a href="jquery-source/jquery-1.4.2.js.html#2462">jQuery 1.4.2 Source</a>
+    <a href="http://api.jquery.com/hover/"><code>.hover()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Binding to Multiple Events</h1>
+  <p class="subhead">(at the same time!)</p>
+  <pre class="brush:js">
+    // If you need more control, you can bind the same handler to
+    // multiple events like this.
+
+    $("img").bind( "mouseenter mouseleave", function( e ) {
+
+      // Toggle the class, based on the event type.
+      $(this).toggleClass( "hover", e.type === "mouseenter" );
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/bind/"><code>.bind()</code> method</a>
+    <a href="http://api.jquery.com/toggleClass/"><code>.toggleClass()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h2><code>window.onload</code> vs DOM ready</h2>
+  <p>What's the difference?</p>
+</section>
+
+<section>
+  <h2><code>window.onload</code> vs DOM ready</h2>
+  <pre class="brush:js class-name:l16">
+    // Handlers bound to the window.onload event execute after every
+    // asset in the page has completely loaded (scripts, stylesheets,
+    // images, iframes, videos, etc).
+
+    $(window).load(function(e){
+      console.log( "Everything in the page has loaded!" );
+    });
+
+
+    // Handlers bound to the DOM ready event execute as soon as the
+    // DOM is ready. Which is *significantly* earlier in most cases.
+
+    $(document).ready(function(){
+      console.log( "The DOM is ready!" );
+    });
+
+
+    // Fortunately, there's an even shorter way to write it.
+
+    $(function(){
+      console.log( "The DOM is ready!" );
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/load/"><code>.load()</code> method</a>
+    <a href="http://api.jquery.com/ready/"><code>.ready()</code> method</a>
+    <a href="http://api.jquery.com/jQuery/"><code>jQuery()</code> function</a>
+  </aside>
+</section>
+
+<section>
+  <h2>An alternative to DOM ready</h2>
+  <p class="subhead">(execute your JavaScript immediately before <code>&lt;/body&gt;</code>)</p>
+  <pre class="brush:html class-name:l20">
+    &lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+      &lt;head&gt;
+        &lt;script src=&quot;jquery.js&quot;&gt;&lt;/script&gt;
+        &lt;script&gt;
+          $(function(){
+            console.log( "This code will execute on DOM ready." );
+          })
+        &lt;/script&gt;
+      &lt;/head&gt;
+      &lt;body&gt;
+        Whole
+        Lot
+        'o
+        DOM
+        &lt;script&gt;
+          console.log( "This code will *also* execute on DOM ready." );
+        &lt;/script&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  </pre>
+</section>
+
+<section>
+  <h1>Event Bubbling</h1>
+  <p class="subhead">originating element &#x2192; parent element(s) &#x2192; document &#x2192; window</p>
+  <pre class="brush:html">
+    &lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+      &lt;body&gt;
+        &lt;div&gt;
+          &lt;p&gt;&lt;a href=&quot;#test&quot;&gt;I am a Link!&lt;/a&gt;&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;p&gt;&lt;a href=&quot;#test&quot;&gt;I am another Link!&lt;/a&gt;&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  </pre>
+
+  <p class="small">Some jQuery Code</p>
+  <pre class="brush:js">
+    // This is just for illustrative purposes!
+
+    $("*").add( document ).add( window ).click(function() {
+      console.log( this );
+    });
+  </pre>
+  <aside>
+    <a href="http://jupiterit.com/news/a-crash-course-in-how-dom-events-work">Jupiter: A crash course in how DOM events work</a>
+  </aside>
+</section>
+
+<section>
+  <h1><code>this</code> vs <code>e.target</code></h1>
+  <pre class="brush:js">
+    $("li").bind( "mouseover mouseout", function( e ) {
+
+      // Toggle the "hover" class on the li.
+      $(this).toggleClass( "hover", e.type === "mouseover" );
+    });
+
+
+    $("li").bind( "mouseover mouseout", function( e ) {
+
+      // Toggle the "hover" class on the element on which the event originated.
+      $(e.target).toggleClass( "hover", e.type === "mouseover" );
+    });
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/bind/"><code>.bind()</code> method</a>
+    <a href="http://api.jquery.com/event.currentTarget/"><code>event.currentTarget</code> property</a>
+    <a href="http://api.jquery.com/event.target/"><code>event.Target</code> property</a>
+    <a href="http://api.jquery.com/toggleClass/"><code>.toggleClass()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Event Delegation</h1>
+  <p class="subhead">(the performant way to bind event handlers)</p>
+  <pre class="brush:js class-name:l16">
+    // Listen for an event on a element's parent, utilizing the event
+    // object .target property to determine where the event originated,
+    // and the .closest traversal method to do something useful.
+
+    $("#list1").bind( "mouseover", function( e ) {
+      $(e.target).closest("li")
+        .addClass( "active" )
+        .siblings()
+          .removeClass( "active" );
+    });
+
+    // Because the event is bound to the list, and not to each list item,
+    // if a new list item is appended, no events need to be rebound.
+
+    $("#list1").append( "<li>I am a brand new list item.</li>" );
+
+
+    // The .delegate method does the same thing, but in a much more
+    // efficient (and elegant) way.
+
+    $("#list1").delegate( "li", "mouseover", function() {
+      $(this)
+        .addClass( "active" )
+        .siblings()
+          .removeClass( "active" );
+    });
+
+    // Unbind a delegated event.
+
+    $("#list1").undelegate( "li", "mouseover" );
+
+
+    // Events can be delegated to any element, even the document
+    // (which is the parent-most element).
+
+    $(document).delegate( "#list1 li", "mouseover", function() {
+      $(this)
+        .addClass( "active" )
+        .siblings()
+          .removeClass( "active" );
+    });
+
+
+    // Which is exactly what .live does, internally (albeit in a
+    // less-performant way).
+
+    $("#list1 li").live( "mouseover", function() {
+      $(this)
+        .addClass( "active" )
+        .siblings()
+          .removeClass( "active" );
+    });
+
+    // Unbind a live event.
+
+    $("#list1 li").die( "mouseover" );
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/delegate/"><code>.delegate</code> method</a>
+    <a href="http://api.jquery.com/undelegate/"><code>.undelegate</code> method</a>
+    <a href="http://api.jquery.com/live/"><code>.live</code> method</a>
+    <a href="http://api.jquery.com/die/"><code>.die</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h2>Custom Events &amp; Event Data</h2>
+  <pre class="brush:js class-name:l20">
+    // Bind a custom event handler that uses event data to set default
+    // options, but still allows for an optional parameter.
+
+    function handle( e, color ) {
+      $(this).css( "color", color || e.data.color );
+    }
+
+    $("p").bind( "colorize", { color: "green" }, handle );
+    $("li").bind( "colorize", { color: "blue" }, handle );
+
+    // Trigger the custom event.
+
+    $("p, li").trigger( "colorize" );
+
+    // Trigger the custom event, passing in extra parameters to the handler.
+
+    $("p, li").trigger( "colorize", [ "red" ] );
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/event.data/">Event Data</a>
+    <a href="http://api.jquery.com/bind/"><code>.bind()</code> method</a>
+    <a href="http://api.jquery.com/trigger/"><code>.trigger()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>.toggle</code> Method</h1>
+  <pre class="brush:js class-name:l20">
+    // Maybe the method should have been called .cycleWhenClicked.
+
+    $("img").toggle(
+      function() {
+        $(this).css( "outline", "4px solid red" );
+      },
+      function() {
+        $(this).css( "outline", "4px solid blue" );
+      },
+      function() {
+        $(this).css( "outline", "4px solid green" );
+      }
+    );
+
+    // Not to be confused with the other usage of .toggle, which toggles
+    // visiblity of the selected elements!
+
+    $("img").toggle();
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/toggle/"><code>.toggle()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>The <code>.proxy</code> Method</h1>
+  <p class="subhead">(lock a function context to a particular <code>this</code>)</p>
+  <pre class="brush:js class-name:l20">
+    var obj = {
+      name: "Bocoup",
+      whatsMyName: function() {
+        console.log( this.name );
+      }
+    };
+
+    // Logs "undefined" because `this` inside the handler is the DOM element.
+    $("input:first").click( obj.whatsMyName );
+
+    // To put it another way, what do you expect `this` to be here?
+    $("input:first").click(function() {
+      console.log( this.name );
+    });
+
+    // Logs "Bocoup" because `this` inside the handler is locked to `obj`.
+    $("input:first").click( $.proxy( obj, "whatsMyName" ) );
+
+    // Also logs "Bocoup" because `this` inside the handler is locked to `obj`.
+    $("input:first").click( $.proxy( obj.whatsMyName, obj ) );
+  </pre>
+  <aside>
+    <a href="http://api.jquery.com/jQuery.proxy/"><code>jQuery.proxy()</code> method</a>
+  </aside>
+</section>
+
+<section>
+  <h1>Recap</h1>
+  <ul>
+    <li>Shortcut methods</li>
+    <li>Binding &amp; triggering</li>
+    <li>Namespaces &amp; references</li>
+    <li>The event object</li>
+    <li>Preventing default</li>
+    <li>Onload vs DOM ready</li>
+    <li>Event bubbling &amp; delegation</li>
+    <li>Custom events</li>
+    <li>Proxy</li>
+  </ul>
+</section>
+
+</body>
+</html>

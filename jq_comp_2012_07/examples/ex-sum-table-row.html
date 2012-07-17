@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sum Table - Row Sum Column</title>
+<script src="../preso/js/jquery.js"></script>
+<style>
+  table { width: 700px; margin-top: 1em; }
+  th, td { padding: 4px; text-align: center; background: #eee; margin: 4px; border: 1px solid #444; }
+  th { background: #777; color: #fff; }
+  .rowsum { background: white; color: #C22; }
+  .pretty {color: magenta; font-weight: bold;}
+</style>
+<script>
+  $(function(){
+      $("table tr").each(function() {
+          var sum = 0;
+          $(this).find("td").each(function() {
+            sum += +($(this).text());
+          });
+          $(this).append("<td class='pretty'>" + sum + "</td>");           
+      });
+  });
+</script>
+</head>
+<body>
+  <h1>This table would be more awesome if it had a 4th column showing the sum of each row.</h1>
+  
+  <p>With jQuery, you must:</p>
+  <ul>
+    <li>calculate the sum of each cell in the same row.</li>
+    <li>place each sum in a new column to the right of the existing columns.</li>
+    <li>give each sum a distinctive style, to make it stand out from the other numbers.</li>
+  </ul>
+  
+  <a href="http://api.jquery.com/">jQuery API documentation</a>
+  
+  <table>
+    <tr>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>5</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>8</td>
+      <td>9</td>
+    </tr>
+  </table>
+  <table>
+
+    <tr>
+
+      <td>1</td>
+
+      <td>2</td>
+
+      <td>3</td>
+
+    </tr>
+
+    <tr>
+
+      <td>4</td>
+
+      <td>5</td>
+
+      <td>6</td>
+
+    </tr>
+
+    <tr>
+
+      <td>7</td>
+
+      <td>8</td>
+
+      <td>9</td>
+
+    </tr>
+
+  </table>
+
+
+
+</body>
+</html>
